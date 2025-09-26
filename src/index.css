@@ -2,6 +2,141 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* index.css or App.css */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+background: linear-gradient(110deg, #982424 0%, #000000 45%);
+ /* Set a default dark background */
+  font-family: sans-serif; /* Or your preferred font */
+}
+.main-app-containe{
+  border: 2px solid white;
+  margin: 2px 2px;
+}
+/* Ensure sections take full viewport height for scrolling */
+.scroll-section {
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white; /* Default text color */
+  text-align: center;
+}
+
+/* For the fixed canvas container */
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* Keep canvas behind overlay content */
+}
+
+/* For the overlay content (navbar, titles, etc.) */
+.overlay-content {
+  position: relative; /* Allows z-index to work relative to other .scroll-section */
+  z-index: 1; /* Keep overlay content above canvas */
+  pointer-events: none; /* Allows clicks to pass through to canvas if needed, but not for text */
+}
+
+.overlay-content > * {
+  pointer-events: auto; /* Re-enable pointer events for actual interactive elements */
+}
+
+.text-content-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+}
+
+.title-text {
+  font-size: 5rem; /* Adjust as needed */
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.subtitle-text {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.button-style {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid white;
+  color: white;
+  text-decoration: none;
+  margin: 10px;
+  pointer-events: auto; /* Ensure buttons are clickable */
+}
+
+
+
+/* Add these styles to your existing App.css */
+
+.format-item {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.format-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.format-item:hover::before {
+  opacity: 1;
+}
+
+/* Animation classes */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(300px) translateY(-100px) rotate(10deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.format-item-animate {
+  animation: slideInFromRight 0.8s ease-out forwards;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .format-item {
+    padding: 1.5rem;
+  }
+}
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

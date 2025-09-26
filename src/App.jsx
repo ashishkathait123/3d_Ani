@@ -1,57 +1,114 @@
-import { useState, useRef, useEffect, Suspense } from "react";
+import { Suspense, useRef, useEffect, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import "./App.css";
+import { Scene } from "./Scene";
+import { NavOverlay } from "./components/NavOverlay";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SlidingTabs } from "./components/SlidingTabs";
+import { ImageSlider } from "./components/ImageSlider";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const scrollContainerRef = useRef(null);
+  const [showTabs, setShowTabs] = useState(false);
+
+  const slides = [
+    "/model/22.png",
+    "/model/11.png",
+    "/model/22.png",
+    "/model/11.png",
+    "/model/22.png",
+    "/model/11.png",
+    "/model/22.png",
+    "/model/11.png",
+  ];
+
+  useEffect(() => {
+    ScrollTrigger.defaults({ scroller: scrollContainerRef.current });
+    const scroller = scrollContainerRef.current;
+    if (!scroller) return;
+
+    const handleScroll = () => {
+      const top = scroller.scrollTop;
+      const vh = window.innerHeight;
+      const index = Math.round(top / vh);
+      setShowTabs(index === 3);
+    };
+
+    scroller.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
+
+    return () => {
+      scroller.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
 
   return (
-    <main className="overflow-x-hidden">
-      <Suspense
-        fallback={
-          <div className="fixed inset-0 grid place-items-center bg-black text-white">
-            Loading...
-          </div>
-        }
+    <div className="main-app-container">
+      {/* Page Border */}
+      <div className="page-border">
+        <div className="line top" />
+        <div className="line bottom" />
+        <div className="line left" />
+        <div className="line right" />
+        <div className="corner top-left" />
+        <div className="corner top-right" />
+        <div className="corner bottom-left" />
+        <div className="corner bottom-right" />
+      </div>
+
+      {/* Fixed Canvas */}
+      <div className="canvas-container">
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 45 }}>
+          <Suspense fallback={null}>
+            <Scene />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {/* Scrollable Content */}
+      <div
+        ref={scrollContainerRef}
+        className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory"
       >
-        <section className="relative grid place-items-center h-[100vh]">
-          <p className="text-white text-center absolute top-[5%] mx-4 w-fit text-8xl font-bold">
-            Apple Watch
-          </p>
-          <p className="text-white text-center absolute bottom-[5%] mx-4 w-fit text-8xl font-bold">
-            Ultra 2
-          </p>
+        <NavOverlay />
 
-          <div  className="h-[100vh] w-[100vw] text-white">
-            
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <div className="text-content-wrapper overlay-content text-center text-white">
+            <h2 className="title-text text-4xl mb-4">Welcome to the Universe</h2>
+            <p className="subtitle-text">Scroll to explore different dimensions</p>
           </div>
         </section>
 
-        <section className=" relative flex items-center justify-evenly h-[100vh]">
-          <p className="w-[50%] border-0 border-red-700"></p>
-
-          <p className="text-white w-[50%] text-center px-4 text-4xl font-semibold">
-            Effortlessly scroll, zoom, and navigate with the re-engineered
-            Digital Crown, now more precise than ever.
-          </p>
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <div className="text-content-wrapper overlay-content text-center text-white">
+            <h2 className="title-text text-4xl mb-4">Creative Playground</h2>
+            <p className="subtitle-text">Where ideas become universes</p>
+          </div>
         </section>
 
-        <section className=" relative flex items-center justify-evenly h-[100vh]">
-          <p className="text-white order-1 w-[50%] text-center px-4 text-4xl font-semibold">
-            Built for adventure, the rugged straps are as tough as you are,
-            ready for any challenge.
-          </p>
-          <p className="w-[50%] order-2"></p>
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <div className="text-content-wrapper overlay-content text-center text-white">
+            <h2 className="title-text text-4xl mb-4">AI-Native Studio</h2>
+            <p className="subtitle-text">World's first tokenized IP platform</p>
+          </div>
         </section>
 
-        <section className=" relative flex items-center justify-evenly h-[100vh]">
-          <p className="w-[50%] border-0 border-red-700"></p>
-
-          <p className="text-white w-[50%] text-center px-4 text-4xl font-semibold">
-            The brightest display ever on an Apple Watch, so you can see it
-            clearly even under the harshest sun.
-          </p>
+        {/* Sliding Tabs */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <SlidingTabs isVisible={showTabs} />
         </section>
-      </Suspense>
-    </main>
+
+        {/* Image Slider */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+<ImageSlider slides={slides} scroller={scrollContainerRef.current} />
+        </section>
+      </div>
+    </div>
   );
 }
 
