@@ -1,28 +1,136 @@
-.image-slide {
-  /* Basic styling for the slide container */
-  box-sizing: border-box; /* Include padding/border in element's total width/height */
+.image-slider-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  /* background: #000; */
 }
 
-.slider-indicators {
+/* --- SLIDE POSITION (No Change from last time) --- */
+.slide {
   position: absolute;
-  bottom: 20px; /* Position dots at the bottom */
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0; 
+  left: 0;
+  
+  /* Slide को Viewport के left-center में रखने के लिए adjustment */
+  margin-left: calc(15vw - 425px); /* 30vw - (850px / 2) */
+  margin-top: calc(50vh - 220px); /* 50vh - (440px / 2) */
+  
+  width: 850px;
+  height: 440px; 
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  overflow: hidden;
+  opacity: 0;
+  will-change: transform, opacity, z-index; 
+}
+
+
+/* --- 1. Content Wrapper (Left Bottom Position) --- */
+.slide-content-wrapper {
+    position: absolute;
+    /* top: 50%; -> इसे हटाकर bottom: 10% करें */
+    bottom: 10%; /* Viewport के नीचे से 10% ऊपर */
+    left: 5%; /* Left से 10% दूरी */
+    /* transform: translateY(-50%); -> इसे हटा दें */
+    z-index: 5;
+    color: #fff;
+    width: 400px;
+}
+
+/* Content Title */
+.slide-content h3 {
+  font-size: 50px; 
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+/* Content Meta Data (No Change) */
+.slide-content .meta {
   display: flex;
-  gap: 10px;
-  z-index: 100; /* Ensure indicators are above slides */
+  justify-content: space-between;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding: 15px 0;
 }
 
-.indicator-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.slide-content .meta div {
+  margin-right: 20px;
+  width: 50%;
 }
 
-.indicator-dot.active {
-  background-color: #ffffff;
-  transform: scale(1.2);
+.slide-content .meta strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+.slide-content .meta p {
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+
+/* --- 2. Controls Container (Right Bottom Position) --- */
+.controls-container {
+    position: absolute;
+    bottom: 10%; /* Viewport के नीचे से 10% ऊपर */
+    right: 10%; /* Left: 10% से बदलकर Right: 10% करें */
+    left: auto; /* Left position को हटा दें */
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    
+    /* Pagination और buttons को right-aligned करने के लिए order बदलें */
+    flex-direction: row-reverse; 
+}
+
+/* Pagination Counter Style */
+.pagination {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: baseline;
+  margin-right: 0; /* Right side में spacing हटाएं */
+  margin-left: 30px; /* Buttons से left side में space दें */
+}
+
+.pagination span:first-child {
+  font-size: 56px; 
+  margin-right: 5px;
+  line-height: 1;
+}
+
+/* Navigation Buttons Style */
+.nav-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.nav-button {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Buttons को order बदलने के बाद सही border दें */
+.nav-button:first-child { 
+    border-right: 1px solid rgba(255,255,255,0.3); /* Remove border-right: none; */
+}
+.nav-button:last-child {
+    border-left: none; /* New styling for right-most button */
 }

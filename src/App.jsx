@@ -7,8 +7,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SlidingTabs } from "./components/SlidingTabs";
 import { ImageSlider } from "./components/ImageSlider";
+import { ScrollIndicators } from "./components/ScrollIndicators";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Scroll Indicators Component
+
 
 function App() {
   const scrollContainerRef = useRef(null);
@@ -20,9 +24,7 @@ function App() {
     "/model/22.png",
     "/model/11.png",
     "/model/22.png",
-    "/model/11.png",
-    "/model/22.png",
-    "/model/11.png",
+   
   ];
 
   useEffect(() => {
@@ -34,7 +36,7 @@ function App() {
       const top = scroller.scrollTop;
       const vh = window.innerHeight;
       const index = Math.round(top / vh);
-      setShowTabs(index === 3);
+      setShowTabs(index === 2); // Adjust index according to SlidingTabs section
     };
 
     scroller.addEventListener("scroll", handleScroll, { passive: true });
@@ -70,44 +72,50 @@ function App() {
         </Canvas>
       </div>
 
+      {/* Scroll Indicators */}
+      <ScrollIndicators scrollContainerRef={scrollContainerRef} />
+
       {/* Scrollable Content */}
-      <div
-        ref={scrollContainerRef}
-        className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory"
-      >
-        <NavOverlay />
+     <div
+  ref={scrollContainerRef}
+  className="main-scroll-container h-screen overflow-y-scroll"
+>
+  <NavOverlay />
 
-        <section className="scroll-section snap-start h-screen flex items-center justify-center">
-          <div className="text-content-wrapper overlay-content text-center text-white">
-            <h2 className="title-text text-4xl mb-4">Welcome to the Universe</h2>
-            <p className="subtitle-text">Scroll to explore different dimensions</p>
-          </div>
-        </section>
+  <section className="scroll-section snap-start h-screen flex items-center justify-center">
+    <div className="text-content-wrapper overlay-content text-center text-white">
+      <h2 className="title-text text-4xl mb-4">
+        Welcome to the Universe
+      </h2>
+      <p className="subtitle-text">
+        Scroll to explore different dimensions
+      </p>
+    </div>
+  </section>
 
-        <section className="scroll-section snap-start h-screen flex items-center justify-center">
-          <div className="text-content-wrapper overlay-content text-center text-white">
-            <h2 className="title-text text-4xl mb-4">Creative Playground</h2>
-            <p className="subtitle-text">Where ideas become universes</p>
-          </div>
-        </section>
+  <section className="scroll-section snap-start h-screen flex items-center justify-center">
+    <div className="text-content-wrapper overlay-content text-center text-white">
+      <h2 className="title-text text-4xl mb-4">
+        World’s First AI-Native Studio with Tokenized IP
+      </h2>
+      <p className="subtitle-text">
+        A grand, ever-evolving world where writers, artists, AI, and fans
+        create legendary stories together. Turn your ideas into scripts,
+        develop rich characters, and bring worlds to life.
+      </p>
+    </div>
+  </section>
 
-        <section className="scroll-section snap-start h-screen flex items-center justify-center">
-          <div className="text-content-wrapper overlay-content text-center text-white">
-            <h2 className="title-text text-4xl mb-4">AI-Native Studio</h2>
-            <p className="subtitle-text">World's first tokenized IP platform</p>
-          </div>
-        </section>
+  <section className="scroll-section snap-start h-screen flex items-center justify-center">
+    <SlidingTabs isVisible={showTabs} />
+  </section>
 
-        {/* Sliding Tabs */}
-        <section className="scroll-section snap-start h-screen flex items-center justify-center">
-          <SlidingTabs isVisible={showTabs} />
-        </section>
+  {/* Slider section: no snap */}
+  <section className="scroll-section slider-wrapper h-screen flex items-center justify-center">
+    <ImageSlider slides={slides} scrollerRef={scrollContainerRef} />
+  </section>
+</div>
 
-        {/* Image Slider */}
-        <section className="scroll-section snap-start h-screen flex items-center justify-center">
-<ImageSlider slides={slides} scroller={scrollContainerRef.current} />
-        </section>
-      </div>
     </div>
   );
 }
