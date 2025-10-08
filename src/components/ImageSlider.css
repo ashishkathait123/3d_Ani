@@ -18,8 +18,8 @@
   
   width: 850px;
   height: 440px; 
-  border-radius: 12px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  /* border-radius: 12px; */
+  /* box-shadow: 0 15px 40px rgba(0,0,0,0.6); */
   overflow: hidden;
   opacity: 0;
   will-change: transform, opacity, z-index; 
