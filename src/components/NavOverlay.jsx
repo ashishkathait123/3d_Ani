@@ -23,38 +23,39 @@ export const NavOverlay = () => {
           <span className="font-bold tracking-wider">Dr. Design</span>
         </div>
 
-        <ul className="flex space-x-10 border-2 border-gray-400 p-2">
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              HOME
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              PRODUCT
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              GALLERY
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              DAO
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              COMMUNITY
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-gray-400">
-              COMPANY &gt;
-            </a>
-          </li>
-        </ul>
+        <ul className="flex items-center justify-center space-x-8 border-2 border-gray-400 px-4 py-2 text-sm font-medium">
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            HOME
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            PRODUCT
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            GALLERY
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            DAO
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            COMMUNITY
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:text-gray-400 transition-colors duration-200">
+            COMPANY &gt;
+          </a>
+        </li>
+      </ul>
+
       </nav>
 
       {/* Main Title Section */}

@@ -38,26 +38,26 @@ export const SlidingTabs = ({ isVisible }) => {
       }}
     >
       {/* Films */}
-      <div className="flex items-center" style={{ marginRight: "15px" }}>
-        <img src="/model/image 274.png" alt="Films" className="w-8 h-8 mr-2" />
+      <div className="flex items-center" style={{ marginRight: "120px" }}>
+        <img src="/model/image 274.png" alt="Films" className="w-15 h-15 mr-1" />
         <span>Films</span>
       </div>
 
       {/* Comics */}
-      <div className="flex items-center" style={{ marginRight: "15px" }}>
-        <img src="/model/image 274.png" alt="Comics" className="w-8 h-8 mr-2" />
+      <div className="flex items-center" style={{ marginRight: "60px" }}>
+        <img src="/model/image 285.png" alt="Comics" className="w-14 h-14 mr-3" />
         <span>Comics</span>
       </div>
 
       {/* Games */}
-      <div className="flex items-center" style={{ marginRight: "15px" }}>
-        <img src="/model/image 274.png" alt="Games" className="w-8 h-8 mr-2" />
+      <div className="flex items-center" style={{ marginRight: "60px" }}>
+        <img src="/model/image 285.png" alt="Games" className="w-14 h-14 mr-3" />
         <span>Games</span>
       </div>
 
       {/* Merchandise */}
-      <div className="flex items-center" style={{ marginRight: "15px" }}>
-        <img src="/model/image 285.png" alt="Merchandise" className="w-8 h-8 mr-2" />
+      <div className="flex items-center">
+        <img src="/model/image 274.png" alt="Merchandise" className="w-15 h-15 mr-1" />
         <span>Merchandise</span>
       </div>
     </div>
