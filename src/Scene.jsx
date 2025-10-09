@@ -8,28 +8,36 @@ import { OrbitalLines } from "./components/OrbitalLines";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const Scene = () => {
+export const Scene = ({ showOrbitalLines }) => {
   const cameraRef = useRef(null);
   const planetGroupRef = useRef(null);
   const [currentSection, setCurrentSection] = useState(0);
 
-  // Optional: add slow rotation to planet
+  // 🌀 Gentle planet rotation
   useFrame(() => {
     if (planetGroupRef.current) {
       planetGroupRef.current.rotation.y += 0.002;
     }
   });
 
-  // Track scroll sections
+  // 🧭 Section tracking based on scroll position (window scroll)
   useEffect(() => {
     const sections = document.querySelectorAll(".scroll-section");
+    console.log("Detected sections:", sections.length);
+
     sections.forEach((section, index) => {
       ScrollTrigger.create({
         trigger: section,
         start: "top center",
         end: "bottom center",
-        onEnter: () => setCurrentSection(index),
-        onEnterBack: () => setCurrentSection(index),
+        onEnter: () => {
+          setCurrentSection(index);
+          console.log(`Entered section ${index}`);
+        },
+        onEnterBack: () => {
+          setCurrentSection(index);
+          console.log(`Entered back section ${index}`);
+        },
       });
     });
 
@@ -38,43 +46,44 @@ export const Scene = () => {
     };
   }, []);
 
-  // Update planet position based on current section
+  // 🎯 Animate planet movement based on current section
   useEffect(() => {
     if (!planetGroupRef.current) return;
 
+    // Define planetary positions for each section
     const planetPositions = [
-      { x: 0, y: -2, z: 0, scale: 1.4 },   // Section 1: Center
-      { x: 0, y: 3, z: 0, scale: 1.3 },    // Section 2: Top
-      { x: -6, y: 3, z: 0, scale: 1.7 },   // Section 3: Top-left
-      // Last section ke liye planet fir center me
-      { x: 0, y: 0, z: 0, scale: 1 },       // Section 4: Reset to center
+      { x: 0, y: -2, z: 0, scale: 1.4 },  // Section 0: Bottom
+      { x: 0, y: 3, z: 0, scale: 1.3 },   // Section 1: Top
+      { x: -6, y: 3, z: 0, scale: 1.7 },  // Section 2: Top-left
+      { x: 0, y: 0, z: 0, scale: 1 },     // Section 3: Center
+      { x: 0, y: 0, z: 0, scale: 1 },     // Section 4: ChatSection
     ];
 
-    // Ensure index does not go out of bounds
-    const idx = currentSection >= planetPositions.length ? planetPositions.length - 1 : currentSection;
-
+    const idx = Math.min(currentSection, planetPositions.length - 1);
     const target = planetPositions[idx];
 
-    // Animate planet
+    // Animate position
     gsap.to(planetGroupRef.current.position, {
       x: target.x,
       y: target.y,
       z: target.z,
-      duration: 0.8,
-      ease: "power2.out",
+      duration: 1.2,
+      ease: "power2.inOut",
     });
 
+    // Animate scale
     gsap.to(planetGroupRef.current.scale, {
       x: target.scale,
       y: target.scale,
       z: target.scale,
-      duration: 0.8,
-      ease: "power2.out",
+      duration: 1.2,
+      ease: "power2.inOut",
     });
   }, [currentSection]);
 
   return (
     <>
+      {/* 🎥 Camera */}
       <PerspectiveCamera
         ref={cameraRef}
         fov={45}
@@ -83,16 +92,17 @@ export const Scene = () => {
         makeDefault
         position={[0, 0, 6]}
       />
+
+      {/* 🌆 Ambient environment */}
       <Environment preset="city" />
 
-      {/* Main Planet */}
+      {/* 🌍 Main Planet + Orbital Lines */}
       <group ref={planetGroupRef}>
         <Planet />
-        {/* Orbital lines - only show on first section */}
-        {currentSection === 0 && <OrbitalLines />}
+        {showOrbitalLines && <OrbitalLines />}
       </group>
 
-      {/* Lights */}
+      {/* 💡 Lighting */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 10, 5]} intensity={1} />
     </>

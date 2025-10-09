@@ -8,6 +8,9 @@ gsap.registerPlugin(ScrollTrigger);
 export const ImageSlider = ({ slides, scrollerRef }) => {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [allSlidesViewed, setAllSlidesViewed] = useState(false);
+  const [viewedSlides, setViewedSlides] = useState(new Set([0])); // First slide is already viewed
+  const scrollTriggerRef = useRef(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -16,79 +19,89 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
 
     const slidesEls = gsap.utils.toArray(".slide");
 
-    // 1. Next/Inactive Slides की Initial Setups (Right-Bottom Position)
+    // Initial Setup for all slides
     gsap.set(slidesEls, {
-      x: "100%", // Viewport के 100% दाईं ओर
-      y: "100%", // Viewport के 100% नीचे की ओर
-      scale: 0.7, 
-      rotation: 8, // नीचे-दाएँ से आने वाला tilt
-      opacity: 0, 
-      zIndex: 1, 
-      transformOrigin: "bottom right", // रोटेशन का केंद्र नीचे-दाएँ कोने पर
+      x: "100%",
+      y: "100%",
+      scale: 0.7,
+      rotation: 8,
+      opacity: 0,
+      zIndex: 1,
+      transformOrigin: "bottom right",
     });
 
-    // 2. Active Slide (First Slide) की Setups
+    // First slide active
     gsap.set(slidesEls[0], {
-      x: 0, // Center में
-      y: 0, // Center में
+      x: 0,
+      y: 0,
       scale: 1,
       rotation: 0,
       opacity: 1,
-      zIndex: 2, 
-      transformOrigin: "center center", 
+      zIndex: 2,
+      transformOrigin: "center center",
     });
 
-    // 3. ScrollTrigger Timeline
+    // ScrollTrigger Timeline
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         scroller,
         start: "top top",
-        // हर स्लाइड के लिए एक full viewport scroll distance चाहिए
         end: () => `+=${(slidesEls.length - 1) * window.innerHeight}`,
-        scrub: 0.8, 
+        scrub: 0.8,
         pin: true,
-        // Active Index Update करना
         onUpdate: (self) => {
           const idx = Math.round(self.progress * (slidesEls.length - 1));
           setActiveIndex(idx);
+          
+          // Track viewed slides
+          setViewedSlides(prev => {
+            const newSet = new Set(prev);
+            newSet.add(idx);
+            return newSet;
+          });
         },
       },
     });
+
+    scrollTriggerRef.current = tl.scrollTrigger;
 
     slidesEls.forEach((slide, i) => {
       const next = slidesEls[i + 1];
       if (!next) return;
 
       const slideLabel = `slide-${i}`;
-      
-      // A) Current Slide बाहर जा रही है (Bottom-Left Exit)
-      tl.to(slide, {
-        x: "-100%", // बाईं ओर ले जाएँ
-        y: "100%", // नीचे की ओर ले जाएँ
-        scale: 0.7,
-        rotation: -10, // नीचे-बाएँ की ओर मुड़ना
-        opacity: 0,
-        zIndex: 1, // पीछे भेज दें
-        transformOrigin: "bottom left", 
-        ease: "power2.in", 
-      }, slideLabel) 
-      
-      // B) Next Slide अंदर आ रही है (Center Entry)
-      .to(
-        next,
+
+      // Current slide exit (Bottom-Left)
+      tl.to(
+        slide,
         {
-          x: 0, // Center में
-          y: 0, // Center में
-          scale: 1,
-          rotation: 0,
-          opacity: 1,
-          zIndex: 2, // सामने ले आएँ
-          transformOrigin: "center center", 
-          ease: "power2.out", 
+          x: "-100%",
+          y: "100%",
+          scale: 0.7,
+          rotation: -10,
+          opacity: 0,
+          zIndex: 1,
+          transformOrigin: "bottom left",
+          ease: "power2.in",
         },
-        slideLabel // Previous animation के साथ ही शुरू करें
-      );
+        slideLabel
+      )
+        // Next slide entry (Center)
+        .to(
+          next,
+          {
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
+            zIndex: 2,
+            transformOrigin: "center center",
+            ease: "power2.out",
+          },
+          slideLabel
+        );
     });
 
     return () => {
@@ -96,56 +109,125 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
     };
   }, [slides, scrollerRef]);
 
+  // Check if all slides have been viewed
+  useEffect(() => {
+    if (viewedSlides.size === slides.length) {
+      setAllSlidesViewed(true);
+    }
+  }, [viewedSlides, slides.length]);
+
+  // Block scroll if not all slides viewed
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const handleScroll = (e) => {
+      if (!allSlidesViewed && scrollTriggerRef.current) {
+        const st = scrollTriggerRef.current;
+        const progress = st.progress;
+        
+        // If user tries to scroll past the slider before viewing all slides
+        if (progress >= 0.99 && viewedSlides.size < slides.length) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Show visual feedback
+          const container = containerRef.current;
+          if (container) {
+            gsap.to(container, {
+              scale: 0.98,
+              duration: 0.1,
+              yoyo: true,
+              repeat: 1,
+              ease: "power2.inOut",
+            });
+          }
+          
+          return false;
+        }
+      }
+    };
+
+    scroller.addEventListener("wheel", handleScroll, { passive: false });
+    scroller.addEventListener("touchmove", handleScroll, { passive: false });
+
+    return () => {
+      scroller.removeEventListener("wheel", handleScroll);
+      scroller.removeEventListener("touchmove", handleScroll);
+    };
+  }, [allSlidesViewed, scrollerRef, viewedSlides, slides.length]);
+
+  // Manual navigation buttons
+  const goToSlide = (direction) => {
+    const newIndex = direction === "next" 
+      ? Math.min(activeIndex + 1, slides.length - 1)
+      : Math.max(activeIndex - 1, 0);
+    
+    if (scrollTriggerRef.current) {
+      const progress = newIndex / (slides.length - 1);
+      const scrollPosition = scrollTriggerRef.current.start + 
+        (scrollTriggerRef.current.end - scrollTriggerRef.current.start) * progress;
+      
+      scrollerRef.current.scrollTo({
+        top: scrollPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
-   <div className="image-slider-section" ref={containerRef}>
-      
-      {/* Active slide data fetch. यह JSX loop के बाहर है। */}
-      {/* Note: आपको यह सुनिश्चित करना होगा कि 'slides' array में title, community, और expansion fields हों। */}
-      {/* यदि slides array केवल strings (URLs) है, तो इन values को hardcode ही रखना होगा। */}
-      {/* मैं मान रहा हूँ कि आपने currentSlide data को useEffect के बाहर fetch किया है: */}
-      {/* const currentSlide = slides[activeIndex] || {}; */}
-      
-      {/* 1. Content Wrapper (Left Aligned) */}
+    <div className="image-slider-section" ref={containerRef}>
+
+      {/* Content Wrapper */}
       <div className="slide-content-wrapper">
         <div className="slide-content">
-          {/* यहाँ title को dynamic या hardcoded use करें */}
-          <h3>{"Sheshnaag"}</h3> 
+          <h3>Sheshnaag</h3>
           <div className="meta">
             <div>
               <strong>COMMUNITY</strong>
-              <p>{"25K engaged token holders"}</p>
+              <p>25K engaged token holders</p>
             </div>
             <div>
               <strong>EXPANSION</strong>
-              <p>{"Comics, books, games, animation, live action pipeline"}</p>
+              <p>Comics, books, games, animation, live action pipeline</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Slide Images (Right-Center Aligned) - यह GSAP द्वारा animated होता है */}
+      {/* Slide Images */}
       {slides.map((src, index) => (
         <div className="slide" key={index}>
-          <img src={src} alt={`Slide ${index}`} /> 
+          <img src={src} alt={`Slide ${index + 1}`} />
         </div>
       ))}
-      
-      {/* 3. Controls Container (Pagination & Buttons) - Left/Bottom Positioned */}
+
+      {/* Controls Container */}
       <div className="controls-container">
         {/* Pagination Counter */}
         <div className="pagination">
           <span>{String(activeIndex + 1).padStart(2, "0")}</span>/
           <span>{String(slides.length).padStart(2, "0")}</span>
         </div>
-        
-        {/* Navigation Buttons (Image के अनुसार) */}
+
+        {/* Navigation Buttons */}
         <div className="nav-buttons">
-            <button className="nav-button" aria-label="Previous Slide">
-                &lt;
-            </button>
-            <button className="nav-button" aria-label="Next Slide">
-                &gt;
-            </button>
+          <button
+            className="nav-button"
+            aria-label="Previous Slide"
+            onClick={() => goToSlide("prev")}
+            disabled={activeIndex === 0}
+          >
+            &lt;
+          </button>
+          <button
+            className="nav-button"
+            aria-label="Next Slide"
+            onClick={() => goToSlide("next")}
+            disabled={activeIndex === slides.length - 1}
+          >
+            &gt;
+          </button>
         </div>
       </div>
     </div>

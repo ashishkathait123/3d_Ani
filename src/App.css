@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
   user-select: none;
   /* overflow-y: hidden; */
 }
@@ -233,56 +234,4 @@
 
 .scroll-indicators div.active {
   background: white;
-}
-/* HERO SECTION ALIGNMENT */
-.scroll-section:first-child {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* keep it top-centered */
-  padding-top: 2.5rem; /* adjust vertical position */
-}
-
-@media (min-width: 768px) {
-  .scroll-section:first-child {
-    padding-top: 4rem; /* more space on larger screens */
-  }
-}
-
-/* "KEEP EXPLORING" button styling */
-.keep-exploring-btn {
-  padding: 0.75rem 2.5rem;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  border-radius: 6px;
-  background: transparent;
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  backdrop-filter: blur(2px);
-}
-
-.keep-exploring-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
-}
-
-/* subtle animated arrow */
-.keep-exploring-btn::after {
-  content: "›";
-  position: absolute;
-  right: 1.3rem;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.keep-exploring-btn:hover::after {
-  opacity: 1;
-  right: 1rem;
 }

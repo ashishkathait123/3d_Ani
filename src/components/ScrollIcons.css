@@ -1,0 +1,279 @@
+/*WORK IN PROGRESS - DO NOT DELETE*/
+/* ===== SCROLL ICONS SECTION ===== */
+.scroll-icons-section {
+  position: relative;
+  min-height: 300vh; /* Extended height for scroll effect */
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(20, 0, 10, 0.95) 30%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  overflow: hidden;
+}
+
+/* ===== SEMI-CIRCULAR PATH ===== */
+.semi-circle-path {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* ===== SPHERE CONTAINER WITH SCROLL ANIMATION ===== */
+.sphere-container-scroll {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+/* ===== ICONS CONTAINER ===== */
+.icons-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+/* ===== ICON CARDS ===== */
+.icon-card {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+}
+
+.icon-card.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== ICON CIRCLE ===== */
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 0, 100, 0.3), rgba(255, 100, 150, 0.2));
+  border: 2px solid rgba(255, 100, 150, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 20px rgba(255, 0, 100, 0.4),
+    0 0 40px rgba(255, 0, 100, 0.2),
+    inset 0 0 20px rgba(255, 0, 100, 0.1);
+  animation: pulse 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.icon-card:hover .icon-circle {
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 30px rgba(255, 0, 100, 0.6),
+    0 0 60px rgba(255, 0, 100, 0.3),
+    inset 0 0 30px rgba(255, 0, 100, 0.2);
+}
+
+.icon-emoji {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+/* ===== ICON CONTENT ===== */
+.icon-content {
+  text-align: center;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.icon-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.02em;
+}
+
+.icon-description {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ===== PARTICLES ===== */
+.particles-scroll {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle-scroll {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  animation: twinkle-scroll 3s infinite ease-in-out;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes twinkle-scroll {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 0, 100, 0.4),
+      0 0 40px rgba(255, 0, 100, 0.2),
+      inset 0 0 20px rgba(255, 0, 100, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 0, 100, 0.6),
+      0 0 60px rgba(255, 0, 100, 0.3),
+      inset 0 0 30px rgba(255, 0, 100, 0.2);
+  }
+}
+
+/* ===== GRADIENT OVERLAY ===== */
+.gradient-overlay-scroll {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .icon-card {
+    width: 280px;
+  }
+  
+  .icon-content {
+    max-width: 240px;
+    padding: 16px;
+  }
+  
+  .icon-circle {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .icon-emoji {
+    font-size: 1.75rem;
+  }
+  
+  .icon-title {
+    font-size: 1.1rem;
+  }
+  
+  .icon-description {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .scroll-icons-section {
+    min-height: 250vh;
+  }
+  
+  .sphere-container-scroll {
+    width: 400px;
+    height: 400px;
+  }
+  
+  .icon-card {
+    width: 240px;
+  }
+  
+  .icon-content {
+    max-width: 200px;
+    padding: 14px;
+  }
+  
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .icon-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .icon-title {
+    font-size: 1rem;
+  }
+  
+  .icon-description {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-card {
+    width: 200px;
+  }
+  
+  .icon-content {
+    max-width: 180px;
+    padding: 12px;
+  }
+  
+  .semi-circle-path {
+    height: 40%;
+  }
+}
+.scroll-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.scroll-section {
+  scroll-snap-align: start;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-wrapper {
+  position: relative;
+}
