@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { Environment, PerspectiveCamera } from "@react-three/drei";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Planet } from "./components/Planet";
+import { OrbitalLines } from "./components/OrbitalLines";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,22 +21,18 @@ export const Scene = () => {
   });
 
   const planetPositions = [
-    // Array size must match the number of scroll-sections in App.jsx (6 sections)
-    // Section 1: Welcome - Planet bottom center (Default starting point)
-    { x: 0, y: -2, z: 0, scale: 1.4 },
-    // Section 2: Step 1 - Scroll planet will go top center
-    { x: 0, y: 2, z: 0, scale: 1.3 },
-    // Section 3: Step 2 - Plant will go to left & Step 3 - Planet disappear (off-screen left)
-    { x: -7, y: 2, z: 0, scale: 1.7 },
-    // Section 4: SlidingTabs - Keep planet disappeared/off-screen
-    { x: -7, y: 2, z: 0, scale: 1.7 },
-    // Section 5: ImageSlider (Pinning) - Keep planet disappeared/off-screen
-    { x: -7, y: 2, z: 0, scale: 1.7 },
-    // Section 6: Step 5/6 - Planet re-appear center, then go top center for orbit line
-    { x: 0, y: 2.5, z: 0, scale: 1.5 },
+    { x: 0, y: -2, z: 0, scale: 1.4 },   // Section 0: initial position
+    { x: 0, y: 2, z: 0, scale: 1.3 },    // Section 1
+    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 2
+    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 3
+    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 4
+    { x: 0, y: 2.5, z: 0, scale: 1.5 },  // Section 5: reappear for orbit line
   ];
 
-  // Track scroll sections using useLayoutEffect to ensure DOM is ready
+  // Determine if orbital lines should be shown
+  const showOrbitLines = currentSection === 0; // only show in initial section
+
+  // Track scroll sections using useLayoutEffect
   useLayoutEffect(() => {
     const sections = document.querySelectorAll(".scroll-section");
     sections.forEach((section, index) => {
@@ -54,14 +51,13 @@ export const Scene = () => {
     };
   }, []);
 
-  // Animate planet position based on current section
+  // Animate planet position & scale based on current section
   useEffect(() => {
     if (!planetGroupRef.current) return;
 
     const idx = currentSection;
     const target = planetPositions[idx] || planetPositions[0];
 
-    // Animate planet
     gsap.to(planetGroupRef.current.position, {
       x: target.x,
       y: target.y,
@@ -95,6 +91,9 @@ export const Scene = () => {
       <group ref={planetGroupRef}>
         <Planet />
       </group>
+
+      {/* Orbital lines appear only in initial planet position */}
+      <OrbitalLines showLines={showOrbitLines} />
 
       {/* Lights */}
       <ambientLight intensity={0.5} />
