@@ -6,12 +6,12 @@ import { NavOverlay } from "./components/NavOverlay";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SlidingTabs } from "./components/SlidingTabs";
-import { ImageSlider } from "./components/ImageSlider";
+// import { ImageSlider } from "./components/ImageSlider";
 import { ScrollIndicators } from "./components/ScrollIndicators";
 import CharacterSlider from "./components/CharacterSlider";
 import LoaderAndIntro from "./components/LoaderAndIntro";
 import SlidingTabSection from "./components/SlidingTabSection";
-
+import FeatureSlider from "./components/FeatureSlider";
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
@@ -129,9 +129,9 @@ function App() {
         </section>
 
         {/* Section 4 (ImageSlider) */}
-        <section className="scroll-section slider-wrapper snap-start h-screen flex items-center justify-center">
+        {/* <section className="scroll-section slider-wrapper snap-start h-screen flex items-center justify-center">
           <ImageSlider slides={slides} scrollerRef={scrollContainerRef} />
-        </section>
+        </section> */}
 
         {/* Section 5 (CharacterSlider) */}
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
@@ -141,6 +141,10 @@ function App() {
         {/* Section 6 (SlidingTabSection) */}
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
           <SlidingTabSection />
+        </section>
+        {/* Section 7 (FeatureSlider) */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+            <FeatureSlider/>
         </section>
       </div>
     </div>
