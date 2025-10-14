@@ -20,13 +20,13 @@ export const Scene = () => {
     }
   });
 
-  const planetPositions = [
-    { x: 0, y: -2, z: 0, scale: 1.4 },   // Section 0: initial position
-    { x: 0, y: 2, z: 0, scale: 1.3 },    // Section 1
-    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 2
-    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 3
-    { x: -7, y: 2, z: 0, scale: 1.7 },   // Section 4
-    { x: 0, y: 2.5, z: 0, scale: 1.5 },  // Section 5: reappear for orbit line
+ const planetPositions = [
+    { x: 0, y: -2, z: 0, scale: 1.4 },  // Section 0: initial position (Bottom)
+    { x: 0, y: 3, z: 0, scale: 1.0 },   // Section 1: Top Center (Smaller)
+    { x: 0, y: 3, z: 0, scale: 1.0 },   // Section 2: Orbit Animation starts
+    { x: -7, y: 2, z: 0, scale: 1.7 },  // Section 3 (example next section)
+    { x: -7, y: 2, z: 0, scale: 1.7 },  // Section 4
+    { x: 0, y: 2.5, z: 0, scale: 1.5 }, // Section 5
   ];
 
   // Determine if orbital lines should be shown
@@ -101,3 +101,7 @@ export const Scene = () => {
     </>
   );
 };
+
+
+
+

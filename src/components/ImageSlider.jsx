@@ -50,14 +50,28 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
       const slideLabel = `slide-${i}`;
 
       // A) Current slide exit
-      tl.to(slide, {
-          x: "100%", y: "0%", scale: 0.7, rotation: 10, opacity: 0, zIndex: 1, transformOrigin: "bottom left", ease: "power2.in",
-        }, slideLabel)
+    tl.to(slide, {
+  x: "100%", 
+  y: "0%", 
+  scale: 0.8,   // slightly smaller
+  rotation: 5,  // subtle rotation
+  opacity: 0, 
+  zIndex: 1, 
+  transformOrigin: "bottom left",
+  ease: "power2.in",
+}, slideLabel)
 
       // B) Next slide entry
         .to(next, {
-            x: 0, y: 0, scale: 1, rotation: 8, opacity: 1, zIndex: 2, transformOrigin: "bottom right", ease: "power2.out",
-          }, slideLabel);
+  x: 0, 
+  y: 0, 
+  scale: 1, 
+  rotation: 0,
+  opacity: 1, 
+  zIndex: 2, 
+  transformOrigin: "center center",
+  ease: "power2.out",
+}, slideLabel);
     });
 
     return () => {

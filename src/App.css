@@ -324,3 +324,72 @@
 
 
 
+/* ============================= */
+/* Footer Styling Enhancements   */
+/* ============================= */
+.footer-wrapper {
+  z-index: 100;
+}
+
+footer {
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+}
+
+footer a {
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #cc0033; /* red accent hover */
+}
+
+/* Smooth fade-in for footer */
+.footer-wrapper {
+  animation: fadeInFooter 0.8s ease forwards;
+}
+
+@keyframes fadeInFooter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Prevent scroll jump when footer appears */
+.main-scroll-container {
+  scroll-behavior: smooth;
+}
+
+
+@keyframes archExpand {
+  0% {
+    transform: scale(0.1);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutBlack {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

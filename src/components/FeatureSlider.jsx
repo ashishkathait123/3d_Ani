@@ -7,7 +7,7 @@ const features = [
     seq: "01",
     title: "Direct Creator Access",
     description: "Connect instantly with a curated network of artists, developers, and writers to jumpstart your project.",
-    visual: { key: "Arch Portal", src: "./F_slide/11.png" },
+    visual: { key: "Arch Portal", src: "./F_slide/001.png" },
   },
   {
     id: 2,
@@ -37,13 +37,20 @@ const features = [
     description: "Utilize a growing collection of 3D models and high-resolution assets ready for any multiverse build.",
     visual: { key: "Pixel Assets", src: "./F_slide/55.png" },
   },
+  {
+    id: 6,
+    seq: "08",
+    title: "Studio-Scale Potential",
+    description: "Scale universes at studio level, with tools, insights, and fan-backed funding.",
+    visual: { key: "Floating Cubes", src: "./F_slide/11.png" },
+  },
 ];
 
 // --- Visual Panel Component (Controls main visual image transition) ---
 const VisualPanel = ({ visualSrc, isActive }) => {
   return (
     <div 
-      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0 z-0'}`}
     >
       <img
         src={visualSrc}

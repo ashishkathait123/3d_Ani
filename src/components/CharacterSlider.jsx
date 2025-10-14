@@ -4,42 +4,51 @@ import React, { useRef, useState } from 'react';
 import CharacterCard from './CharacterCard';
 import { characters } from '../assets/data'; // Import your data
 
+const CARD_WIDTH = 280; // Must match the fixed width in CharacterCard.jsx ('280px')
+
 const CharacterSlider = () => {
   const sliderRef = useRef(null);
-  // State to track the ID of the currently selected/clicked card
-  const [selectedCardId, setSelectedCardId] = useState(characters[1].id); 
-  const cardWidth = 384; 
-
+  // Default to the first element's ID if the array is not empty
+  const [selectedCardId, setSelectedCardId] = useState(characters[0]?.id); 
+  
   const scroll = (direction) => {
     if (sliderRef.current) {
       const currentScroll = sliderRef.current.scrollLeft;
-      const gap = 32; 
+      const gap = 32; // space-x-8 is 32px
       const targetScroll = direction === 'next'
-        ? currentScroll + cardWidth + gap
-        : currentScroll - cardWidth - gap;
+        ? currentScroll + CARD_WIDTH + gap
+        : currentScroll - CARD_WIDTH - gap;
 
       sliderRef.current.scrollTo({
         left: targetScroll,
         behavior: 'smooth',
       });
-      
-      // Optional: You might want to update the highlight on scroll if it's meant to visually track the center card, but 
-      // based on your request, we only update it on click. We'll leave the state management purely for clicks.
     }
   };
   
-  // New click handler to update the selected ID
   const handleCardClick = (id) => {
     setSelectedCardId(id);
+    const cardIndex = characters.findIndex(c => c.id === id);
+    if (sliderRef.current && cardIndex !== -1) {
+        const gap = 32;
+        // Scroll to position the clicked card near the left edge
+        sliderRef.current.scrollTo({
+            left: cardIndex * (CARD_WIDTH + gap),
+            behavior: 'smooth',
+        });
+    }
   };
 
   return (
     <div className="bg-black py-16 px-4 sm:px-8 lg:px-16 w-full">
-      {/* Header and Controls */}
-      <div className="max-w-7xl mx-auto flex justify-between items-center mb-12">
-        <div className="text-left">
-          <h2 className="text-4xl sm:text-5xl font-light text-white mb-2">
-            Over 3000 people have brought their vision to life using Mugafi Ved and built 
+      {/* Header and Controls - Assuming previous styling is correct for the header */}
+      <div className="max-w-7xl mx-auto flex justify-between items-end mb-12">
+        <div className="text-left max-w-2xl">
+          <h2 className="text-3xl sm:text-4xl font-normal text-white mb-2 leading-tight">
+            Over 3000 people have brought their 
+            <span className="block text-4xl sm:text-5xl font-light">
+                vision to life using Mugafi Ved and built 
+            </span>
           </h2>
           <p className="text-5xl sm:text-6xl font-extrabold text-white">
             100+ characters.
@@ -47,16 +56,16 @@ const CharacterSlider = () => {
         </div>
         
         {/* Navigation Buttons */}
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 mb-2">
           <button
             onClick={() => scroll('prev')}
-            className="w-12 h-12 border border-gray-700 text-white text-xl hover:bg-gray-800 transition-colors"
+            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors"
           >
             &lt;
           </button>
           <button
             onClick={() => scroll('next')}
-            className="w-12 h-12 border border-gray-700 text-white text-xl hover:bg-gray-800 transition-colors"
+            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors"
           >
             &gt;
           </button>
@@ -67,23 +76,21 @@ const CharacterSlider = () => {
       <div
         ref={sliderRef}
         className="flex overflow-x-scroll snap-x snap-mandatory space-x-8 pb-4"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch',
-        }}
       >
         <style>{`
-          .overflow-x-scroll::-webkit-scrollbar {
-            display: none;
-          }
+          /* Hide scrollbar for a cleaner look */
+          .overflow-x-scroll::-webkit-scrollbar { display: none; }
+          .overflow-x-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
         
         {characters.map((character) => (
-          <div key={character.id} className="snap-start" onClick={() => handleCardClick(character.id)}>
+          <div 
+            key={character.id} 
+            className="snap-start" 
+            onClick={() => handleCardClick(character.id)}
+          >
             <CharacterCard 
               character={character} 
-              // Check if the current card's ID matches the selected ID
               isHighlighted={character.id === selectedCardId} 
             />
           </div>

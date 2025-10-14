@@ -6,12 +6,19 @@ import { NavOverlay } from "./components/NavOverlay";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SlidingTabs } from "./components/SlidingTabs";
-// import { ImageSlider } from "./components/ImageSlider";
 import { ScrollIndicators } from "./components/ScrollIndicators";
 import CharacterSlider from "./components/CharacterSlider";
 import LoaderAndIntro from "./components/LoaderAndIntro";
 import SlidingTabSection from "./components/SlidingTabSection";
 import FeatureSlider from "./components/FeatureSlider";
+import HeroSection2 from "./components/HeroSection2";
+import WelcomeSection from "./components/WelcomeSection";
+import Footer from "./components/Footer";
+import CallToActionSection from "./components/CallToActionSection";
+import { ImageSlider } from "./components/ImageSlider";
+import Evolve from "./components/Evolve";
+import HeroPartnerSection from "./components/HeroPartnerSection";
+import ArchDoorwayWrapper from "./components/ArchDoorwayWrapper";
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
@@ -19,37 +26,44 @@ function App() {
   const [showTabs, setShowTabs] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [showOrbitalLines, setShowOrbitalLines] = useState(true);
+  const [showFooter, setShowFooter] = useState(false); // 👈 NEW STATE
 
   const slides = [
-    "/model/22.png",
-    "/model/11.png",
-    "/model/22.png",
-    "/model/11.png",
-    "/model/22.png",
-  ];
+  { img: "/model/22.png", title: "Dream Architect", community: "Writers Guild", expansion: "Vol. 1" },
+  { img: "/model/11.png", title: "Quantum Heist", community: "Cineverse", expansion: "Vol. 2" },
+  { img: "/model/22.png", title: "Neon Samurai", community: "Future Fables", expansion: "Vol. 3" },
+  { img: "/model/11.png", title: "Echo Protocol", community: "AI Chronicles", expansion: "Vol. 4" },
+  { img: "/model/22.png", title: "Starborn", community: "Mythos Legion", expansion: "Vol. 5" },
+];
 
   useEffect(() => {
     if (!loadingComplete) return;
 
-    ScrollTrigger.defaults({ scroller: scrollContainerRef.current });
     const scroller = scrollContainerRef.current;
     if (!scroller) return;
 
+    ScrollTrigger.defaults({ scroller });
+
     const handleScroll = () => {
       const top = scroller.scrollTop;
+      const height = scroller.scrollHeight;
       const vh = window.innerHeight;
       const index = Math.round(top / vh);
-      
-      // Show tabs only on the third section (index 2)
+
+      // Show tabs on the third section (index 2)
       setShowTabs(index === 2);
-      
-      // Show orbital lines only on first section (index 0)
+
+      // Show orbital lines only on first section
       setShowOrbitalLines(index === 0);
+
+      // ✅ Show footer when user reaches bottom (within 100px)
+      const nearBottom = top + scroller.clientHeight >= height - 100;
+      setShowFooter(nearBottom);
     };
 
     scroller.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
-    handleScroll(); // Initial call to set state
+    handleScroll();
 
     return () => {
       scroller.removeEventListener("scroll", handleScroll);
@@ -58,7 +72,9 @@ function App() {
   }, [loadingComplete]);
 
   if (!loadingComplete) {
-    return <LoaderAndIntro onAnimationComplete={() => setLoadingComplete(true)} />;
+    return (
+      <LoaderAndIntro onAnimationComplete={() => setLoadingComplete(true)} />
+    );
   }
 
   return (
@@ -74,31 +90,30 @@ function App() {
         <div className="corner bottom-left" />
         <div className="corner bottom-right" />
       </div>
-      
+
       {/* Three.js Canvas */}
       <div className="canvas-container">
         <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 45 }}>
           <Suspense fallback={null}>
-            <Scene showOrbitalLines={showOrbitalLines} scrollerRef={scrollContainerRef} />
+            <Scene
+              showOrbitalLines={showOrbitalLines}
+              scrollerRef={scrollContainerRef}
+            />
           </Suspense>
         </Canvas>
       </div>
 
       <ScrollIndicators scrollContainerRef={scrollContainerRef} />
 
-      {/* Main Scroll Container - FIX APPLIED HERE */}
+      {/* Main Scroll Content */}
       <div
         ref={scrollContainerRef}
-        className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory" // <--- ADDED 'snap-y snap-mandatory'
+        className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory"
       >
         <NavOverlay />
 
-        {/* Section 1 */}
-        <section className="scroll-section snap-start h-screen relative flex items-center justify-center">
-          <div
-            className="absolute top-[15%] text-center text-white max-w-4xl px-6"
-            style={{ transform: "translateY(-10%)" }}
-          >
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <div className="absolute top-[15%] text-center text-white max-w-4xl px-6">
             <h2 className="title-text text-5xl md:text-6xl font-bold mb-2 leading-tight tracking-wide">
               Turn Ideas Into<br />Multi-Format Universes
             </h2>
@@ -108,14 +123,16 @@ function App() {
             <button className="keep-exploring-btn">KEEP EXPLORING ↓</button>
           </div>
         </section>
-
-        {/* Section 2 */}
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
-          <div className="text-content-wrapper overlay-content text-center text-white max-w-3xl px-6">
-            <h2 className="title-text text-4xl md:text-5xl font-bold mb-6">
+          <CallToActionSection/>
+        </section>
+
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <div className="text-center text-white max-w-3xl px-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
               World's First AI-Native Studio with Tokenized IP
             </h2>
-            <p className="subtitle-text text-base md:text-lg opacity-90 leading-relaxed">
+            <p className="text-base md:text-lg opacity-90 leading-relaxed">
               A grand, ever-evolving world where writers, artists, AI, and fans
               create legendary stories together. Turn your ideas into scripts,
               develop rich characters, and bring worlds to life.
@@ -123,32 +140,62 @@ function App() {
           </div>
         </section>
 
-        {/* Section 3 (SlidingTabs) */}
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
           <SlidingTabs isVisible={showTabs} />
         </section>
 
-        {/* Section 4 (ImageSlider) */}
-        {/* <section className="scroll-section slider-wrapper snap-start h-screen flex items-center justify-center">
-          <ImageSlider slides={slides} scrollerRef={scrollContainerRef} />
-        </section> */}
 
-        {/* Section 5 (CharacterSlider) */}
+ 
+
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
           <CharacterSlider />
         </section>
-        
-        {/* Section 6 (SlidingTabSection) */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <Evolve />
+        </section>
+
+
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
           <SlidingTabSection />
         </section>
-        {/* Section 7 (FeatureSlider) */}
         <section className="scroll-section snap-start h-screen flex items-center justify-center">
-            <FeatureSlider/>
+          <HeroPartnerSection />
+        </section>
+
+       
+        
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+           <ArchDoorwayWrapper>
+      <FeatureSlider />
+    </ArchDoorwayWrapper>
+        </section>
+
+        <section className="scroll-section snap-start h-screen flex items-center justify-center">
+          <HeroSection2 />
+        </section>
+          <section className="scroll-section slider-wrapper snap-start h-screen flex items-center justify-center">
+          <ImageSlider slides={slides} scrollerRef={scrollContainerRef} />
+        </section>
+
+
+     <section className="scroll-section snap-start h-screen flex items-center justify-center">
+        <WelcomeSection />
         </section>
       </div>
+
+      {/*  Footer appears only at bottom */}
+      {showFooter && (
+        <div className="footer-wrapper fixed bottom-0 left-0 w-full">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 }
 
 export default App;
+
+
+
+
+
