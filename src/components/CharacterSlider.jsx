@@ -40,7 +40,7 @@ const CharacterSlider = () => {
   };
 
   return (
-    <div className="bg-black py-16 px-4 sm:px-8 lg:px-16 w-full">
+    <div className=" py-16 px-4 sm:px-8 lg:px-16 w-full">
       {/* Header and Controls - Assuming previous styling is correct for the header */}
       <div className="max-w-7xl mx-auto flex justify-between items-end mb-12">
         <div className="text-left max-w-2xl">

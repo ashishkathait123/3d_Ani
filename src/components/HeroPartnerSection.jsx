@@ -52,7 +52,7 @@ const HeroPartnerSection = () => {
     return (
         <section 
             ref={sectionRef} // Attach the ref here
-            className="relative w-screen min-h-screen bg-black flex items-center justify-center py-20 overflow-hidden"
+            className="relative w-screen min-h-screen flex items-center justify-center py-20 overflow-hidden"
         >
             
             {/* Red Background Glow Effect */}

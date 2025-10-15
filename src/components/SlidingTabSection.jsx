@@ -22,16 +22,12 @@ const SlidingTabSection = () => {
 
   return (
     // 1. Main Container (Adjust height for visual context)
-    <section className="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center p-8">
+    <section className="relative w-screen h-screen  overflow-hidden flex items-center justify-center p-8">
       {/* 2. Red Background Blur Effect (Simulating the glow) */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-50 z-0 pointer-events-none">
         <div
           className="absolute inset-0"
-          style={{
-            // Adjusted radial gradient for better glow simulation
-            background:
-              "radial-gradient(circle at 100% 50%, rgba(255, 0, 70, 0.4) 0%, rgba(0, 0, 0, 0) 70%)",
-          }}
+       
         ></div>
       </div>
 

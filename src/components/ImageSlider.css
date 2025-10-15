@@ -1,66 +1,82 @@
+/*
+ * ImageSlider.css - Updated for deep tilt and precise positioning based on video
+ */
+
 .image-slider-section {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  /* background: #000; */
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* 💥 CHANGE 1: Adjusted perspective for a deeper 3D effect. */
+    perspective: 1000px; 
+    /* 💥 CHANGE 2: Perspective origin is set far away from top-left, 
+       making the top-left area appear close and large. */
+    perspective-origin: 150% -100px; 
 }
 
-/* --- SLIDE POSITION (No Change from last time) --- */
+/* --- WRAPPER to manage slide positioning --- */
+.slide-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform, opacity, z-index; 
+    transform-style: preserve-3d;
+}
+
+/* --- SLIDE POSITION (Inner slide content position) --- */
 .slide {
-  position: absolute;
-  top: 0; 
-  left: 0;
-  
-  /* Slide को Viewport के left-center में रखने के लिए adjustment */
-  margin-left: calc(15vw - 425px); /* 30vw - (850px / 2) */
-  margin-top: calc(50vh - 220px); /* 50vh - (440px / 2) */
-  
-  width: 850px;
-  height: 440px; 
-  /* border-radius: 12px; */
-  /* box-shadow: 0 15px 40px rgba(0,0,0,0.6); */
-  overflow: hidden;
-  opacity: 0;
-  will-change: transform, opacity, z-index; 
+    position: absolute;
+    /* 💥 CHANGE 3: Shift the center point to position the slide in the top-left area. */
+    left: 30%; 
+    top: 45%; 
+    transform: translate(-50%, -50%); /* Use -50% to correctly center the slide container */
+    
+    width: 850px; 
+    height: 440px; 
+    overflow: hidden;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    pointer-events: none;
 }
 
 
-/* --- 1. Content Wrapper (Left Bottom Position) --- */
+/* ------------------------------------------------------------------ */
+/* --- 1. Content Wrapper (Adjusted position) --- */
+/* ------------------------------------------------------------------ */
 .slide-content-wrapper {
     position: absolute;
-    /* top: 50%; -> इसे हटाकर bottom: 10% करें */
-    bottom: 10%; /* Viewport के नीचे से 10% ऊपर */
-    left: 5%; /* Left से 10% दूरी */
-    /* transform: translateY(-50%); -> इसे हटा दें */
+    bottom: 15%; /* Slightly higher */
+    left: 8%; /* Slightly right */
     z-index: 5;
     color: #fff;
     width: 400px;
 }
-
-/* Content Title */
 .slide-content h3 {
-  font-size: 50px; 
-  margin-bottom: 30px;
-  text-transform: uppercase;
+    font-size: 50px; 
+    margin-bottom: 30px;
+    text-transform: uppercase;
 }
-
-/* Content Meta Data (No Change) */
 .slide-content .meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  text-transform: uppercase;
-  border-top: 1px solid rgba(255,255,255,0.3);
-  border-bottom: 1px solid rgba(255,255,255,0.3);
-  padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding: 15px 0;
 }
-
 .slide-content .meta div {
-  margin-right: 20px;
-  width: 50%;
+    margin-right: 20px;
+    width: 50%;
 }
-
 .slide-content .meta strong {
     display: block;
     margin-bottom: 5px;
@@ -73,43 +89,41 @@
 }
 
 
-/* --- 2. Controls Container (Right Bottom Position) --- */
+/* ------------------------------------------------------------------ */
+/* --- 2. Controls Container (Adjusted position) --- */
+/* ------------------------------------------------------------------ */
 .controls-container {
     position: absolute;
-    bottom: 10%; /* Viewport के नीचे से 10% ऊपर */
-    right: 10%; /* Left: 10% से बदलकर Right: 10% करें */
-    left: auto; /* Left position को हटा दें */
+    bottom: 15%; /* Aligned with content wrapper */
+    right: 15%; /* Adjusted right position */
+    left: auto; 
     z-index: 10;
     display: flex;
     align-items: center;
-    
-    /* Pagination और buttons को right-aligned करने के लिए order बदलें */
     flex-direction: row-reverse; 
 }
 
 /* Pagination Counter Style */
 .pagination {
-  color: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  display: flex;
-  align-items: baseline;
-  margin-right: 0; /* Right side में spacing हटाएं */
-  margin-left: 30px; /* Buttons से left side में space दें */
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: baseline;
+    margin-right: 0;
+    margin-left: 30px; 
 }
-
 .pagination span:first-child {
-  font-size: 56px; 
-  margin-right: 5px;
-  line-height: 1;
+    font-size: 56px; 
+    margin-right: 5px;
+    line-height: 1;
 }
 
-/* Navigation Buttons Style */
+/* Navigation Buttons Style (Unchanged) */
 .nav-buttons {
     display: flex;
     gap: 4px;
 }
-
 .nav-button {
     background: transparent;
     border: 1px solid rgba(255,255,255,0.3);
@@ -122,24 +136,12 @@
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
 .nav-button:hover {
     background-color: rgba(255,255,255,0.1);
 }
-
-/* Buttons को order बदलने के बाद सही border दें */
 .nav-button:first-child { 
-    border-right: 1px solid rgba(255,255,255,0.3); /* Remove border-right: none; */
+    border-right: 1px solid rgba(255,255,255,0.3);
 }
 .nav-button:last-child {
-    border-left: none; /* New styling for right-most button */
-}
-
-.slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 24px; /* Rounded corners */
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6); /* Optional shadow for depth */
-  pointer-events: none;
+    border-left: none;
 }

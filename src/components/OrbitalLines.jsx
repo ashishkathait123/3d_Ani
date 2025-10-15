@@ -139,9 +139,9 @@ export const OrbitalLines = ({ showLines }) => {
     // Radii for separation (gaps)
     const R1 = 0.85; 
     const R2 = 1; 
-    const R3 = 1.45; 
+    const R3 = 1.65; 
     const R4 = 1.75;
-    const R5 = 2.05;
+    const R5 = 2;
     const R6 = 2.35;
 
     const orbitals = useMemo(
@@ -153,9 +153,9 @@ export const OrbitalLines = ({ showLines }) => {
                 speed: 0, 
                 color: "#ffffff", 
                 startAngle: Math.PI * 0.1, 
-                endAngle: Math.PI * 0.7, // Short arc (0.6 * PI)
+                endAngle: Math.PI * 0.9, // Short arc (0.6 * PI)
                 isNodeLine: true,
-                centerOffset: [-0.15, -0.1, -0.1] 
+                centerOffset: [-0.15, -0, -0.1] 
             },
             
             // Line 2: Middle Arc - Full Semicircle (PI)
@@ -167,7 +167,7 @@ export const OrbitalLines = ({ showLines }) => {
                 startAngle: Math.PI * 0.1, 
                 endAngle: Math.PI * 0.8,// Exactly a semicircle (1.0 * PI)
                 isNodeLine: true,
-                centerOffset: [0.05, 0.05, 0.1] 
+                centerOffset: [0.05, -0.4, 0.08] 
             },
 
             // Line 3: Outer Arc - Short Arc, different side, minimal tilt
@@ -176,7 +176,7 @@ export const OrbitalLines = ({ showLines }) => {
                 tilt: 2, 
                 speed: 0, 
                 color: "#ffffff", 
-                startAngle: Math.PI * 1.04, 
+                startAngle: Math.PI * 1.05, 
                 endAngle: Math.PI * 1.3, // Short arc (0.6 * PI)
                 isNodeLine: true,
                 centerOffset: [1.06, 1, 0.1] 
@@ -202,10 +202,10 @@ export const OrbitalLines = ({ showLines }) => {
                 tilt: -0.2, 
                 speed: 0, 
                 color: "#c3e6f9", // Light blue
-                startAngle: Math.PI * 0.25, 
-                endAngle: Math.PI * 0.75, // Half of a semicircle (0.5 * PI)
+                startAngle: Math.PI * 0.30, 
+                endAngle: Math.PI * 0.70, // Half of a semicircle (0.5 * PI)
                 isNodeLine: true,
-                centerOffset: [0.0, -2, 0.2] 
+                centerOffset: [0.0, -2, 0.1] 
             },
             
             // New Line 6 (R6): Full Semicircle, large radius
@@ -225,7 +225,7 @@ export const OrbitalLines = ({ showLines }) => {
 
     return (
         // Adjusted group position for a better overall view.
-        <group ref={groupRef} position={[0, -1.03, 1.4]}> 
+        <group ref={groupRef} position={[0, -0.4, 1.4]}> 
             {orbitals.map((orbit, i) => (
                 <OrbitalLine key={`orbit-${i}`} {...orbit} />
             ))}

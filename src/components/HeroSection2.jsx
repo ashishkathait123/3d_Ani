@@ -45,13 +45,13 @@ const HeroSection2 = () => {
   {/* ✅ Gradient background layer */}
   <div
   className="absolute inset-0 z-0"
-  style={{
-    background:
-      "radial-gradient(circle at 60% 20% , rgba(255, 60, 60, 1) 0%, rgba(0, 0, 0, 1) 70%)",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
+  // style={{
+  //   background:
+  //     "radial-gradient(circle at 60% 20% , rgba(255, 60, 60, 1) 0%, rgba(0, 0, 0, 1) 70%)",
+  //   backgroundRepeat: "no-repeat",
+  //   backgroundSize: "cover",
+  //   backgroundPosition: "center",
+  // }}
 ></div>
 
 
