@@ -12,41 +12,44 @@ export const Scene = () => {
   const cameraRef = useRef(null);
   const planetGroupRef = useRef(null);
   const [currentSection, setCurrentSection] = useState(0);
+  const [visibleSections, setVisibleSections] = useState([]);
 
-  // Optional: add slow rotation to planet
+  // Optional: slow rotation for planet
   useFrame(() => {
-    if (planetGroupRef.current) {
-      // Ensure the planet doesn't try to rotate if its scale is 0
-      if (planetGroupRef.current.scale.x > 0.01) {
-        planetGroupRef.current.rotation.y += 0.002;
-      }
+    if (planetGroupRef.current && planetGroupRef.current.scale.x > 0.01) {
+      planetGroupRef.current.rotation.y += 0.002;
     }
   });
 
-const planetPositions = [
-  { x: 0, y: -1.2, z: -1, scale: 1.4 },   // 0. Initial (bottom)
-  { x: 0, y: 3, z: 0, scale: 1.6 },       // 1. Top center
-  { x: 0, y: 3, z: 0, scale: 1.5 },       // 2. Orbit animation start
-  { x: -6, y: 3, z: 0, scale: 1.7 },      // 3. Top-left
-  { x: -7, y: 2, z: 0, scale: 0 },        // 4. Disappear
-  { x: -7, y: 2, z: 0, scale: 0 },        // 5. Hidden (transition section)
-  { x: 0, y: -1.5, z: -1, scale: 1.5 },      // 6. 💥 Reappear in center (OrbitLineReveal)
-  { x: 0, y: 3, z: 0, scale: 1.3 },       // 7. After OrbitLineReveal
-  { x: -7, y: 2, z: 0, scale: 0 },        // 8. Hidden again
-  { x: -7, y: 2, z: 0, scale: 0 },        // 9. Hidden
-  { x: -7, y: 2, z: 0, scale: 0 },        // 10. Hidden
-  { x: -7, y: 2, z: 0, scale: 0 },        // 11. Hidden
-  { x: -7, y: 2, z: 0, scale: 0 },        // 12. Hidden
-  { x: 0, y: 0, z: -1, scale: 1.5 },0      // 13. 💥 Reappear in WelcomeSection
-];
+  // Define planet positions for each section
+  const planetPositions = [
+    { x: 0, y: -1.2, z: -1, scale: 1.4 },   // 0
+    { x: 0, y: 3, z: 0, scale: 1.6 },       // 1
+    { x: 0, y: 3, z: 0, scale: 1.5 },       // 2
+    { x: -6, y: 3, z: 0, scale: 1.7 },      // 3
+    { x: -7, y: 2, z: 0, scale: 0 },        // 4 disappear
+    { x: -7, y: 2, z: 0, scale: 0 },        // 5
+    { x: 0, y: -1.5, z: -1, scale: 1.5 },   // 6
+    { x: 0, y: 3, z: 0, scale: 1.3 },       // 7
+    { x: -7, y: 2, z: 0, scale: 0 },        // 8
+    { x: -7, y: 2, z: 0, scale: 0 },        // 9
+    { x: -7, y: 2, z: 0, scale: 0 },        // 10
+    { x: -7, y: 2, z: 0, scale: 0 },        // 11
+    { x: -7, y: 2, z: 0, scale: 0 },        // 12
+    { x: 0, y: 0, z: -1, scale: 1.5 },      // 13 HeroSection2
+    { x: 0, y: 0, z: -1, scale: 1.5 },      // 14 WelcomeSection
+  ];
 
-
-  // Determine if orbital lines should be shown
-  const showOrbitLines = currentSection === 0; // only show in initial section
-
-  // Track scroll sections using useLayoutEffect
+  // Track scroll sections and current section
   useLayoutEffect(() => {
     const sections = document.querySelectorAll(".scroll-section");
+
+    // Dynamically determine visible sections based on data attribute
+    const visible = Array.from(sections)
+      .map((sec, idx) => (sec.dataset.showPlanet === "true" ? idx : null))
+      .filter(idx => idx !== null);
+    setVisibleSections(visible);
+
     sections.forEach((section, index) => {
       ScrollTrigger.create({
         trigger: section,
@@ -59,48 +62,44 @@ const planetPositions = [
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
-  // Animate planet position & scale based on current section
-useEffect(() => {
-  if (!planetGroupRef.current) return;
+  // Animate planet based on current section
+  useEffect(() => {
+    if (!planetGroupRef.current) return;
 
-  const idx = Math.min(currentSection, planetPositions.length - 1);
-  const target = planetPositions[idx];
+    const idx = Math.min(currentSection, planetPositions.length - 1);
+    const target = planetPositions[idx];
 
-  // Animate position & scale
-  gsap.to(planetGroupRef.current.position, {
-    x: target.x,
-    y: target.y,
-    z: target.z,
-    duration: 1.2,
-    ease: "power2.inOut",
-  });
+    // Animate position & scale
+    gsap.to(planetGroupRef.current.position, {
+      x: target.x,
+      y: target.y,
+      z: target.z,
+      duration: 1.2,
+      ease: "power2.inOut",
+    });
 
-  gsap.to(planetGroupRef.current.scale, {
-    x: target.scale,
-    y: target.scale,
-    z: target.scale,
-    duration: 1.2,
-    ease: "power2.inOut",
-  });
+    gsap.to(planetGroupRef.current.scale, {
+      x: target.scale,
+      y: target.scale,
+      z: target.scale,
+      duration: 1.2,
+      ease: "power2.inOut",
+    });
 
-  // Fade-in when planet is visible (sections 0, 6, 13)
-  if ([0, 6, 13].includes(currentSection)) {
-    gsap.fromTo(
-      planetGroupRef.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 1, ease: "power1.out" }
-    );
-  } else {
-    // Immediately hide for all other sections
-    gsap.set(planetGroupRef.current, { opacity: 0 });
-  }
-}, [currentSection]);
+    // Animate opacity based on visibility
+    if (visibleSections.includes(currentSection)) {
+      gsap.to(planetGroupRef.current, { opacity: 1, duration: 1, ease: "power1.out" });
+    } else {
+      gsap.to(planetGroupRef.current, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
+    }
+  }, [currentSection, visibleSections]);
 
-
+  // Only show orbital lines in first section
+  const showOrbitLines = currentSection === 0;
 
   return (
     <>
@@ -114,12 +113,12 @@ useEffect(() => {
       />
       <Environment preset="city" />
 
-      {/* Main Planet */}
+      {/* Planet */}
       <group ref={planetGroupRef}>
         <Planet />
       </group>
 
-      {/* Orbital lines appear only in initial planet position */}
+      {/* Orbital Lines */}
       <OrbitalLines showLines={showOrbitLines} />
 
       {/* Lights */}

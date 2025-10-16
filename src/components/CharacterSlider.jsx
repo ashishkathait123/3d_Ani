@@ -43,17 +43,20 @@ const CharacterSlider = () => {
     <div className=" py-16 px-4 sm:px-8 lg:px-16 w-full">
       {/* Header and Controls - Assuming previous styling is correct for the header */}
       <div className="max-w-7xl mx-auto flex justify-between items-end mb-12">
-        <div className="text-left max-w-2xl">
-          <h2 className="text-3xl sm:text-4xl font-normal text-white mb-2 leading-tight">
-            Over 3000 people have brought their 
-            <span className="block text-4xl sm:text-5xl font-light">
-                vision to life using Mugafi Ved and built 
-            </span>
-          </h2>
-          <p className="text-5xl sm:text-6xl font-extrabold text-white">
-            100+ characters.
-          </p>
-        </div>
+       <div className="text-left max-w-2xl">
+  <h2 className="text-3xl sm:text-4xl font-normal text-white leading-snug">
+    <span className="block text-4xl sm:text-5xl font-light mb-2">
+      Over 3000 people have brought their
+    </span>
+    <span className="block text-4xl sm:text-5xl font-light mb-2">
+      vision to life using Mugafi Ved and built
+    </span>
+    <span className="block text-4xl sm:text-5xl font-light">
+      100+ characters.
+    </span>
+  </h2>
+</div>
+
         
         {/* Navigation Buttons */}
         <div className="flex space-x-4 mb-2">

@@ -25,8 +25,15 @@ const AIWritingHero = ({ onSubmit }) => {
       {/* The original box dimensions w: 611 h: 193 are achieved by the max-w-xl and padding/content */}
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-xl p-4 md:p-6 rounded-xl border border-gray-700 bg-black/50 relative"
-        style={{ height: '193px' }} // Set the desired height
+        className="w-full max-w-xl p-4 md:p-6 rounded-xl border border-gray-700 bg-black relative"
+          style={{
+    height: '193px',
+    boxShadow: `
+      0 0 15px 10px pink,
+      0 0 30px 17px red,
+      0 0 50px 10px yellow
+    `,
+  }}
       >
         {/* Input Field - Styled to be the main text area */}
         <input

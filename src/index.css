@@ -138,6 +138,13 @@ body,
     padding: 1.5rem;
   }
 }
+
+
+.footer-wrapper {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
