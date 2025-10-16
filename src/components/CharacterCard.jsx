@@ -1,15 +1,8 @@
-// components/CharacterCard.jsx
-
 import React from 'react';
 
-// Adjusted dimensions for a better design replica
-const CARD_WIDTH = '280px'; 
-const CARD_HEIGHT = '440px'; // Slightly adjusted height
-
-// Custom CSS for the bracket effect
+// Custom CSS for brackets, hover glow, and highlighted state
 const BracketButtonStyles = () => (
   <style>{`
-    /* Wrapper for the button and brackets */
     .bracket-button-wrapper {
       position: relative;
       display: flex;
@@ -17,10 +10,10 @@ const BracketButtonStyles = () => (
       align-items: center;
       width: 100%;
       height: 48px; 
-      padding: 0 16px; /* Padding for the brackets to have room on the sides of the card body */
+      padding: 0 16px;
+      transition: all 0.3s ease;
     }
-    
-    /* The actual button element */
+
     .bracket-button-text-container {
       position: relative;
       z-index: 10;
@@ -28,59 +21,57 @@ const BracketButtonStyles = () => (
       display: flex;
       align-items: center;
       justify-content: center;
-      /* Ensure the button text is always white/gray unless highlighted */
       color: rgba(255, 255, 255, 0.8);
-      font-size: 14px; /* text-sm */
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
 
-    /* Bracket Lines */
     .bracket-button-wrapper::before,
     .bracket-button-wrapper::after {
       content: '';
       position: absolute;
       top: 50%;
-      transform: translateY(-50%); 
-      
-      width: 15px; 
-      height: 100%; 
-      border-color: #ff4b6e; /* Pink color */
+      transform: translateY(-50%);
+      width: 15px;
+      height: 100%;
+      border-color: #ff4b6e;
       border-style: solid;
       border-width: 0;
       transition: all 0.3s ease;
-      z-index: 5; 
-      pointer-events: none; 
-    }
-    
-    /* Left Bracket */
-    .bracket-button-wrapper::before {
-      left: 0;
-      border-left-width: 1px;
-      border-top-width: 1px;
-      border-bottom-width: 1px;
-      border-right-width: 0;
+      z-index: 5;
+      pointer-events: none;
     }
 
-    /* Right Bracket */
-    .bracket-button-wrapper::after {
-      right: 0;
-      border-right-width: 1px;
-      border-top-width: 1px;
-      border-bottom-width: 1px;
-      border-left-width: 0;
-    }
+    .bracket-button-wrapper::before { left: 0; border-left-width:1px; border-top-width:1px; border-bottom-width:1px; }
+    .bracket-button-wrapper::after { right: 0; border-right-width:1px; border-top-width:1px; border-bottom-width:1px; }
 
-    /* Highlighted (Pink Solid) State */
     .bracket-button-wrapper.is-highlighted {
-        padding: 0; /* Remove padding when button is solid pink */
+      padding: 0;
     }
     .bracket-button-wrapper.is-highlighted::before,
     .bracket-button-wrapper.is-highlighted::after {
       opacity: 0;
       visibility: hidden;
     }
+
+    .character-card:hover {
+      box-shadow: 0 0 30px rgba(255, 75, 110, 0.4);
+      background-image: linear-gradient(180deg, rgba(255, 75, 110, 0.1) 0%, rgba(0,0,0,0) 25%);
+      border-color: #ff4b6e;
+    }
+
+    .character-card:hover .bracket-button-text-container {
+      background-color: #ff4b6e;
+      color: white;
+    }
+
+    .character-card:hover .bracket-button-wrapper::before,
+    .character-card:hover .bracket-button-wrapper::after {
+      opacity: 0;
+      visibility: hidden;
+    }
   `}</style>
 );
-
 
 const CharacterCard = ({ character, isHighlighted }) => {
   const displayCharacter = character || {
@@ -89,8 +80,7 @@ const CharacterCard = ({ character, isHighlighted }) => {
     chats: "0.0K CHATS",
     image: "https://via.placeholder.com/280x280.png?text=VED+Character",
   };
-  
-  // Custom styling for the highlighted state (border and gradient glow)
+
   const highlightStyle = isHighlighted 
     ? { 
         backgroundImage: 'linear-gradient(180deg, rgba(255, 75, 110, 0.1) 0%, rgba(0, 0, 0, 0) 25%)',
@@ -100,64 +90,41 @@ const CharacterCard = ({ character, isHighlighted }) => {
 
   return (
     <div
-      className={`
-        flex-shrink-0 bg-black p-4 relative transition-all duration-300
-        flex flex-col text-white text-left
-        ${isHighlighted ? 'border-pink-600 border' : 'border-gray-800 border'}
-      `}
-      style={{ width: CARD_WIDTH, height: CARD_HEIGHT, ...highlightStyle }}
+      className={`character-card bg-black p-4 relative transition-all duration-300 flex flex-col text-white text-left
+        ${isHighlighted ? 'border-pink-600 border' : 'border-gray-800 border'}`}
+      style={{
+        width: 'min(90vw, 280px)',   // responsive width
+        height: 'auto',
+        aspectRatio: '280 / 440',    // keeps original aspect ratio
+        ...highlightStyle
+      }}
     >
       <BracketButtonStyles />
       
-      {/* 1. Character Image Container */}
-      {/* The image container should be wide and tall, centered, and have a clear separation line */}
-      <div className="w-full h-40 flex justify-center items-start relative mb-4">
-          <div className="w-full h-full overflow-hidden rounded-md">
-             <img
-              src={displayCharacter.image}
-              alt={displayCharacter.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {/* Top Separator Line */}
-          <div className="absolute bottom-[-16px] left-0 w-full h-px bg-gray-700"></div>
-      </div>
-      
-      {/* 2. Text Content Container - Starts below the line (adjusted by margin) */}
-      <div className="flex flex-col flex-grow mt-6">
-          
-          {/* Name - Matches design typography */}
-          <h3 className="text-white text-2xl font-semibold mb-2">{displayCharacter.name}</h3> 
-          
-          {/* Description - Smaller, lighter, tightly packed */}
-          <p className="text-gray-400 text-sm line-clamp-3 mb-2">{displayCharacter.description}</p>
-          
-          {/* Chats Count - Smallest, regular white/gray text, pushed down */}
-          <div className="text-gray-400 text-sm mt-auto mb-4 font-normal">
-            {displayCharacter.chats} CHATS
-          </div>
+      {/* Character Image */}
+      <div className="w-full flex justify-center items-start relative mb-4 h-2/5">
+        <div className="w-full h-full overflow-hidden rounded-md">
+          <img src={displayCharacter.image} alt={displayCharacter.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="absolute bottom-[-16px] left-0 w-full h-px bg-gray-700"></div>
       </div>
 
-      {/* 3. Button with Brackets */}
+      {/* Text */}
+      <div className="flex flex-col flex-grow mt-6">
+        <h3 className="text-white text-2xl font-semibold mb-2">{displayCharacter.name}</h3>
+        <p className="text-gray-400 text-sm line-clamp-3 mb-2">{displayCharacter.description}</p>
+        <div className="text-gray-400 text-sm mt-auto mb-4 font-normal">{displayCharacter.chats} CHATS</div>
+      </div>
+
+      {/* CHAT NOW Button */}
       <div className="mt-auto relative w-full">
-        <div className={`
-            bracket-button-wrapper 
-            ${isHighlighted ? 'is-highlighted' : ''}
-          `}
-        >
-            <button
-              className={`
-                bracket-button-text-container w-full py-3 font-bold tracking-widest transition-all duration-300
-                ${isHighlighted
-                  // Highlighted: Pink solid background, White text
-                  ? 'bg-pink-600 text-white hover:bg-pink-700'
-                  // Unhighlighted: Black background, Gray/White text
-                  : 'bg-black hover:text-pink-600'
-                }
-              `}
-            >
-              CHAT NOW
-            </button>
+        <div className={`bracket-button-wrapper ${isHighlighted ? 'is-highlighted' : ''}`}>
+          <button
+            className={`bracket-button-text-container w-full py-3 font-bold tracking-widest transition-all duration-300
+              ${isHighlighted ? 'bg-pink-600 text-white hover:bg-pink-700' : 'bg-black hover:text-pink-600'}`}
+          >
+            CHAT NOW
+          </button>
         </div>
       </div>
     </div>

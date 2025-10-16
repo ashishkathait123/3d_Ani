@@ -1,15 +1,49 @@
+// ImageSlider.jsx
+
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import "./ImageSlider.css";
 
-export const ImageSlider = ({ slides, scrollerRef }) => {
+// 💡 RECOMMENDED: Define your slide data here (or import from a separate file).
+const SLIDE_DATA = [
+    { 
+        title: "Kuberraa", 
+        community: "50K engaged token holders", 
+        expansion: "Live-actions films spinoff shows pipeline", 
+        img: "/assets/images/kuberraa.jpg" 
+    },
+    { 
+        title: "QUANTUM HEIST", 
+        community: "CINEVERSE", 
+        expansion: "VOL. 2", 
+        img: "/assets/images/quantum-heist.jpg" 
+    },
+    // ... add more slides
+];
+
+export const ImageSlider = ({ slides = SLIDE_DATA, scrollerRef }) => {
   const containerRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const slidesRef = useRef([]); 
   const animationTimeline = useRef(null);
 
   const numSlides = slides.length;
+  
+  // -------------------- GSAP PARAMETERS (ADJUSTED FOR DESIRED TILT) --------------------
+  // Tilt for inactive/exiting slides (deep perspective, moving away)
+  const INACTIVE_ROTATE_X = -15; // Tilts top edge away
+  const INACTIVE_ROTATE_Y =15; // Tilts left edge away
+  const INACTIVE_Z = -200; 
+  
+  // 💥 CRITICAL CHANGE: Tilt for the *ACTIVE* slide to match the screenshot
+  // - ACTIVE_ROTATE_X: A small negative value tilts the top edge slightly away,
+  //                    making the bottom edge come forward.
+  // - ACTIVE_ROTATE_Y: A positive value tilts the right edge further away from the viewer.
+  const ACTIVE_ROTATE_X = 0;  // Tilts top edge slightly away from viewer (bottom towards)
+  const ACTIVE_ROTATE_Y = -10; // Tilts right edge away from viewer (left edge towards)
+  const ACTIVE_Z = 0; 
 
+  // -------------------- ANIMATE FUNCTION (Unchanged logic, uses new constants) --------------------
   const animateSlide = useCallback((newIndex, direction) => {
     if (newIndex === activeIndex || slidesRef.current.length < numSlides) return;
 
@@ -23,86 +57,45 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
       animationTimeline.current.kill();
     }
 
-    // Video animation uses deep perspective:
-    // Outgoing slide moves to bottom-right, new slide comes from bottom-right.
-    
     const totalSlideWidth = window.innerWidth;
     const totalSlideHeight = window.innerHeight;
-
-    // 💥 CHANGE 4: Exit position is significantly to the bottom right and further back (z)
     const exitX = totalSlideWidth * 0.8;
     const exitY = totalSlideHeight * 0.5;
-    const exitZ = -200; // Push back in Z-space
-
-    // 💥 CHANGE 5: Rotation values for the inactive/exiting state (Deep 3D Tilt)
-    const inactiveRotateX = -15; // Tilts top edge away
-    const inactiveRotateY = 15; // Tilts left edge away
-    const inactiveRotateZ = 0; // No Z-axis rotation (flat plane)
 
     animationTimeline.current = gsap.timeline({
       onComplete: () => {
-        // Reset the outgoing slide to the far-off inactive state
         gsap.set(currentSlide, {
-          x: exitX, 
-          y: exitY,
-          z: exitZ, 
-          scale: 0.6, 
-          rotationX: inactiveRotateX, 
-          rotationY: inactiveRotateY,
-          rotation: inactiveRotateZ,
-          opacity: 0,
-          zIndex: 1,
+          x: exitX, y: exitY, z: INACTIVE_Z, 
+          scale: 0.6, rotationX: INACTIVE_ROTATE_X, rotationY: INACTIVE_ROTATE_Y, rotation: 0,
+          opacity: 0, zIndex: 1,
         });
         setActiveIndex(newIndex);
       },
     });
 
-    // 1. Current slide exit (moves out to bottom-right and shrinks/tilts)
-    // The active slide moves slightly down and right, and tilts away as it exits.
     animationTimeline.current.to(currentSlide, {
-      x: exitX, 
-      y: exitY,
-      z: exitZ, 
-      scale: 0.6, 
-      rotationX: inactiveRotateX, 
-      rotationY: inactiveRotateY,
-      rotation: inactiveRotateZ,
-      opacity: 0, 
-      zIndex: 1, 
-      duration: 1.0, 
-      ease: "power4.inOut", // Stronger ease for dramatic feel
+      x: exitX, y: exitY, z: INACTIVE_Z, 
+      scale: 0.6, rotationX: INACTIVE_ROTATE_X, rotationY: INACTIVE_ROTATE_Y, rotation: 0,
+      opacity: 0, zIndex: 1, 
+      duration: 1.0, ease: "power4.inOut",
     }, 0); 
 
-    // 2. Next slide entry (comes in from bottom-right, expands/straightens)
     animationTimeline.current.fromTo(nextSlide, 
       { 
-        x: exitX, 
-        y: exitY,
-        z: exitZ, 
-        scale: 0.6, 
-        rotationX: inactiveRotateX, 
-        rotationY: inactiveRotateY,
-        rotation: inactiveRotateZ,
-        opacity: 0, // Start fully transparent
-        zIndex: 2, 
+        x: exitX, y: exitY, z: INACTIVE_Z, 
+        scale: 0.6, rotationX: INACTIVE_ROTATE_X, rotationY: INACTIVE_ROTATE_Y, rotation: 0,
+        opacity: 0, zIndex: 2, 
       }, 
       {
-        x: 0, 
-        y: 0,
-        z: 0,
-        scale: 1, 
-        rotationX: 0, 
-        rotationY: 0,
-        rotation: 0,
-        opacity: 1, 
-        zIndex: 2, 
-        duration: 1.0,
-        ease: "power4.inOut",
+        x: 0, y: 0, z: ACTIVE_Z,
+        scale: 1, rotationX: ACTIVE_ROTATE_X, rotationY: ACTIVE_ROTATE_Y, rotation: 0,
+        opacity: 1, zIndex: 2, 
+        duration: 1.0, ease: "power4.inOut",
       }, 0); 
   }, [activeIndex, numSlides, slidesRef]);
 
 
-  // Navigation Handlers (Carousel style: wrap around) - NO CHANGE
+  // Navigation Handlers (Unmodified)
   const nextSlide = useCallback(() => {
     const newIndex = (activeIndex + 1) % numSlides;
     animateSlide(newIndex, 'next');
@@ -113,7 +106,7 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
     animateSlide(newIndex, 'prev');
   }, [activeIndex, numSlides, animateSlide]);
 
-// --- INITIALIZATION EFFECT ---
+// --- INITIALIZATION EFFECT (Updated with new Active Tilt constants) ---
   useEffect(() => {
     if (slidesRef.current.length !== numSlides || numSlides === 0) return; 
 
@@ -121,46 +114,25 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
     const totalSlideWidth = window.innerWidth;
     const totalSlideHeight = window.innerHeight;
 
-
-    // 💥 CHANGE 6: Initial 3D state for all inactive slides
-    const inactiveRotateX = -15; 
-    const inactiveRotateY = 15; 
-    const inactiveRotateZ = 0; 
-
     const exitX = totalSlideWidth * 0.8;
     const exitY = totalSlideHeight * 0.5;
-    const exitZ = -200; 
 
-    // 1. Set all slides off-screen/inactive state
     gsap.set(slidesEls, {
-      x: exitX, 
-      y: exitY,
-      z: exitZ, 
-      scale: 0.6, 
-      rotationX: inactiveRotateX, 
-      rotationY: inactiveRotateY,
-      rotation: inactiveRotateZ, 
-      opacity: 0,
-      zIndex: 1,
+      x: exitX, y: exitY, z: INACTIVE_Z, 
+      scale: 0.6, rotationX: INACTIVE_ROTATE_X, rotationY: INACTIVE_ROTATE_Y, rotation: 0, 
+      opacity: 0, zIndex: 1,
       transformOrigin: "center center",
     });
     
-    // 2. Set the FIRST slide visible/centered immediately (active state)
     gsap.set(slidesEls[0], {
-      x: 0, 
-      y: 0,
-      z: 0,
-      scale: 1, 
-      rotationX: 0, 
-      rotationY: 0,
-      rotation: 0, 
-      opacity: 1, 
-      zIndex: 2,
+      x: 0, y: 0, z: ACTIVE_Z,
+      scale: 1, rotationX: ACTIVE_ROTATE_X, rotationY: ACTIVE_ROTATE_Y, rotation: 0, 
+      opacity: 1, zIndex: 2,
     });
 
   }, [numSlides]); 
 
-// --- SCROLL/SWIPE LISTENER EFFECT & CONTENT UPDATE EFFECT (UNMODIFIED) ---
+// --- SCROLL/SWIPE LISTENER EFFECT & CONTENT UPDATE EFFECT (Unmodified) ---
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -216,7 +188,6 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
     };
   }, [nextSlide, prevSlide]); 
 
-// --- CONTENT UPDATE EFFECT (UNMODIFIED) ---
   const currentSlide = slides[activeIndex] || {};
 
   useEffect(() => {
@@ -229,7 +200,7 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
 
   return (
     <div className="image-slider-section" ref={containerRef}>
-      {/* 1. Content Wrapper (dynamic) */}
+      {/* 1. Content Wrapper (dynamic) */}
       <div className="slide-content-wrapper">
         <div className="slide-content">
           <h3>{currentSlide.title}</h3>
@@ -253,13 +224,8 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
         </div>
       ))}
 
-      {/* 3. Controls Container (UNMODIFIED) */}
+      {/* 3. Controls Container */}
       <div className="controls-container">
-        <div className="pagination">
-          <span>{String(activeIndex + 1).padStart(2, "0")}</span>/
-          <span>{String(slides.length).padStart(2, "0")}</span>
-        </div>
-
         <div className="nav-buttons">
           <button 
                 className="nav-button" 
@@ -271,6 +237,10 @@ export const ImageSlider = ({ slides, scrollerRef }) => {
                 aria-label="Next Slide" 
                 onClick={nextSlide}
             >&gt;</button>
+        </div>
+        <div className="pagination">
+          <span>{String(activeIndex + 1).padStart(2, "0")}</span>/
+          <span>{String(slides.length).padStart(2, "0")}</span>
         </div>
       </div>
     </div>

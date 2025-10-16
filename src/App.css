@@ -35,9 +35,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; 
-    overflow: hidden; /* Ensure images don't overflow */
+    z-index: 0; /* Backmost layer */
+    pointer-events: none;
 }
+
 
 .background-image-item {
     position: absolute;
@@ -168,18 +169,18 @@
 
 /* Canvas container */
 .canvas-container {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* In front of background */
+    pointer-events: none;
 }
-
 /* Scrollable content */
 .main-scroll-container {
-  position: relative;
-  z-index: 10;
+    position: relative;
+    z-index: 2; /* On top of canvas & background */
 }
 
 /* Optional: styling buttons */

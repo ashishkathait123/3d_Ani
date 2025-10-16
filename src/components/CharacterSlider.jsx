@@ -1,23 +1,34 @@
-// components/CharacterSlider.jsx
-
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import CharacterCard from './CharacterCard';
-import { characters } from '../assets/data'; // Import your data
-
-const CARD_WIDTH = 280; // Must match the fixed width in CharacterCard.jsx ('280px')
+import { characters } from '../assets/data';
 
 const CharacterSlider = () => {
   const sliderRef = useRef(null);
-  // Default to the first element's ID if the array is not empty
-  const [selectedCardId, setSelectedCardId] = useState(characters[0]?.id); 
-  
+  const [selectedCardId, setSelectedCardId] = useState(characters[0]?.id);
+  const [cardWidth, setCardWidth] = useState(280); // default card width
+  const gap = 32; // spacing between cards
+
+  // Update card width based on container size
+  useEffect(() => {
+    const updateWidth = () => {
+      if (!sliderRef.current) return;
+      const containerWidth = sliderRef.current.offsetWidth;
+      // make card width responsive: max 280px, min 60% of container
+      const responsiveWidth = Math.min(280, containerWidth * 0.6);
+      setCardWidth(responsiveWidth);
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
   const scroll = (direction) => {
     if (sliderRef.current) {
       const currentScroll = sliderRef.current.scrollLeft;
-      const gap = 32; // space-x-8 is 32px
-      const targetScroll = direction === 'next'
-        ? currentScroll + CARD_WIDTH + gap
-        : currentScroll - CARD_WIDTH - gap;
+      const targetScroll =
+        direction === 'next'
+          ? currentScroll + cardWidth + gap
+          : currentScroll - cardWidth - gap;
 
       sliderRef.current.scrollTo({
         left: targetScroll,
@@ -25,50 +36,42 @@ const CharacterSlider = () => {
       });
     }
   };
-  
+
   const handleCardClick = (id) => {
     setSelectedCardId(id);
     const cardIndex = characters.findIndex(c => c.id === id);
     if (sliderRef.current && cardIndex !== -1) {
-        const gap = 32;
-        // Scroll to position the clicked card near the left edge
-        sliderRef.current.scrollTo({
-            left: cardIndex * (CARD_WIDTH + gap),
-            behavior: 'smooth',
-        });
+      sliderRef.current.scrollTo({
+        left: cardIndex * (cardWidth + gap),
+        behavior: 'smooth',
+      });
     }
   };
 
   return (
-    <div className=" py-16 px-4 sm:px-8 lg:px-16 w-full">
-      {/* Header and Controls - Assuming previous styling is correct for the header */}
-      <div className="max-w-7xl mx-auto flex justify-between items-end mb-12">
-       <div className="text-left max-w-2xl">
-  <h2 className="text-3xl sm:text-4xl font-normal text-white leading-snug">
-    <span className="block text-4xl sm:text-5xl font-light mb-2">
-      Over 3000 people have brought their
-    </span>
-    <span className="block text-4xl sm:text-5xl font-light mb-2">
-      vision to life using Mugafi Ved and built
-    </span>
-    <span className="block text-4xl sm:text-5xl font-light">
-      100+ characters.
-    </span>
-  </h2>
-</div>
+    <div className="py-16 px-4 sm:px-8 lg:px-16 w-full mb-32 mt-32">
+      {/* Header and Controls */}
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-8">
+        {/* Header */}
+        <div className="text-left max-w-2xl">
+          <h2 className="text-4xl sm:text-5xl font-light text-white leading-snug">
+            Over <span className="font-semibold text-pink-500">3000 people</span> have brought their<br />
+            vision to life using Mugafi Ved and built<br />
+            <span className="font-semibold text-pink-500">100+ characters</span>.
+          </h2>
+        </div>
 
-        
         {/* Navigation Buttons */}
-        <div className="flex space-x-4 mb-2">
+        <div className="flex space-x-4 mt-4 lg:mt-0">
           <button
             onClick={() => scroll('prev')}
-            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors"
+            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors rounded"
           >
             &lt;
           </button>
           <button
             onClick={() => scroll('next')}
-            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors"
+            className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors rounded"
           >
             &gt;
           </button>
@@ -78,23 +81,23 @@ const CharacterSlider = () => {
       {/* Slider Content */}
       <div
         ref={sliderRef}
-        className="flex overflow-x-scroll snap-x snap-mandatory space-x-8 pb-4"
+        className="flex overflow-x-auto snap-x snap-mandatory space-x-4 sm:space-x-6 md:space-x-8 pb-4 scrollbar-none"
       >
         <style>{`
-          /* Hide scrollbar for a cleaner look */
-          .overflow-x-scroll::-webkit-scrollbar { display: none; }
-          .overflow-x-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+          .overflow-x-auto::-webkit-scrollbar { display: none; }
+          .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
-        
+
         {characters.map((character) => (
-          <div 
-            key={character.id} 
-            className="snap-start" 
+          <div
+            key={character.id}
+            className="snap-start cursor-pointer flex-shrink-0"
+            style={{ width: cardWidth }}
             onClick={() => handleCardClick(character.id)}
           >
-            <CharacterCard 
-              character={character} 
-              isHighlighted={character.id === selectedCardId} 
+            <CharacterCard
+              character={character}
+              isHighlighted={character.id === selectedCardId}
             />
           </div>
         ))}

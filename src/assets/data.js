@@ -7,7 +7,7 @@ export const characters = [
     name: "William Shakespeare",
     description: "The William Shakespeare chatbot captures the wit and poetic brilliance of the legendary playwright.",
     chats: "1169.2K CHATS",
-    image: "/model/11png", // Replace with your actual image path
+    image: "/model/22.png", // Replace with your actual image path
   },
   {
     id: 2,

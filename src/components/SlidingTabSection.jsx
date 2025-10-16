@@ -22,7 +22,7 @@ const SlidingTabSection = () => {
 
   return (
     // 1. Main Container (Adjust height for visual context)
-    <section className="relative w-screen h-screen  overflow-hidden flex items-center justify-center p-8">
+    <section className="relative w-screen h-screen   overflow-hidden flex items-center justify-center p-8">
       {/* 2. Red Background Blur Effect (Simulating the glow) */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-50 z-0 pointer-events-none">
         <div
@@ -34,7 +34,7 @@ const SlidingTabSection = () => {
       {/* 3. Content Grid (Max-width adjusted slightly to match screenshot layout) */}
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-12 gap-4 h-[700px]">
         {/* Left Side: Text and Image */}
-        <div className="col-span-6 flex flex-col justify-center pr-2">
+        <div className="col-span-6 flex flex-col justify-center pr-14">
           {/* Top Navigation Replica */}
 
           <h1 className="text-[48px text-white mb-6 leading-tight">
@@ -51,7 +51,7 @@ const SlidingTabSection = () => {
             <img
               src={activeFormat.image || "/model/11.png"}
               alt="Multi-Format IP"
-              className="w-full h-full object-cover transition-opacity duration-500 transform -rotate-[-13deg]"
+              className="w-full h-full object-cover transition-opacity duration-500 transform -rotate-[-12deg]"
             />
           </div>
         </div>

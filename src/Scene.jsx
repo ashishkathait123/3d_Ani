@@ -26,7 +26,7 @@ export const Scene = () => {
     { x: 0, y: -1.2, z: -1, scale: 1.4 },   // 0
     { x: 0, y: 3, z: 0, scale: 1.6 },       // 1
     { x: 0, y: 3, z: 0, scale: 1.5 },       // 2
-    { x: -6, y: 3, z: 0, scale: 1.7 },      // 3
+    { x: -5.2, y: 3.5, z: 0, scale: 2 },      // 3
     { x: -7, y: 2, z: 0, scale: 0 },        // 4 disappear
     { x: -7, y: 2, z: 0, scale: 0 },        // 5
     { x: 0, y: -1.5, z: -1, scale: 1.5 },   // 6

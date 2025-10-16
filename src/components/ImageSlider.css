@@ -29,11 +29,11 @@
 .slide {
     position: absolute;
     /* 💥 CHANGE 3: Shift the center point to position the slide in the top-left area. */
-    left: 30%; 
+    left:-1%; 
     top: 45%; 
     transform: translate(-50%, -50%); /* Use -50% to correctly center the slide container */
     
-    width: 850px; 
+    width: 1150px; 
     height: 440px; 
     overflow: hidden;
 }
