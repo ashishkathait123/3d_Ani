@@ -1,41 +1,66 @@
-/*
- * ImageSlider.css - Updated for deep tilt and precise positioning based on video
- */
+/* ImageSlider.css - Mobile First Responsive Design */
 
 .image-slider-section {
     position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    /* 💥 CHANGE 1: Adjusted perspective for a deeper 3D effect. */
-    perspective: 1000px; 
-    /* 💥 CHANGE 2: Perspective origin is set far away from top-left, 
-       making the top-left area appear close and large. */
-    perspective-origin: 150% -100px; 
+    perspective: 1000px;
+    perspective-origin: 150% -100px;
 }
 
-/* --- WRAPPER to manage slide positioning --- */
+/* Mobile Styles */
+.image-slider-section.mobile {
+    perspective: 800px;
+    perspective-origin: 120% -50px;
+}
+
+/* Tablet Styles */
+.image-slider-section.tablet {
+    perspective: 900px;
+    perspective-origin: 140% -80px;
+}
+
+/* Slide Wrapper */
 .slide-wrapper {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    will-change: transform, opacity, z-index; 
+    will-change: transform, opacity, z-index;
     transform-style: preserve-3d;
 }
 
-/* --- SLIDE POSITION (Inner slide content position) --- */
+/* Slide Container - Responsive */
 .slide {
     position: absolute;
-    /* 💥 CHANGE 3: Shift the center point to position the slide in the top-left area. */
-    left:-1%; 
-    top: 45%; 
-    transform: translate(-50%, -50%); /* Use -50% to correctly center the slide container */
-    
-    width: 1150px; 
-    height: 440px; 
+    left: -1%;
+    top: 45%;
+    transform: translate(-50%, -50%);
     overflow: hidden;
+}
+
+/* Mobile Slide Sizes */
+.image-slider-section.mobile .slide {
+    width: 320px;
+    height: 200px;
+    left: 5%;
+    top: 40%;
+}
+
+/* Tablet Slide Sizes */
+.image-slider-section.tablet .slide {
+    width: 650px;
+    height: 300px;
+    left: -2%;
+    top: 42%;
+}
+
+/* Desktop Slide Sizes */
+.image-slider-section:not(.mobile):not(.tablet) .slide {
+    width: 1150px;
+    height: 440px;
 }
 
 .slide img {
@@ -47,23 +72,56 @@
     pointer-events: none;
 }
 
+/* Mobile Image Adjustments */
+.image-slider-section.mobile .slide img {
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
 
-/* ------------------------------------------------------------------ */
-/* --- 1. Content Wrapper (Adjusted position) --- */
-/* ------------------------------------------------------------------ */
+/* Content Wrapper - Responsive */
 .slide-content-wrapper {
     position: absolute;
-    bottom: 15%; /* Slightly higher */
-    left: 8%; /* Slightly right */
+    bottom: 15%;
+    left: 8%;
     z-index: 5;
     color: #fff;
     width: 400px;
 }
-.slide-content h3 {
-    font-size: 50px; 
+
+/* Mobile Content */
+.image-slider-section.mobile .slide-content-wrapper {
+    bottom: 20%;
+    left: 5%;
+    width: 90%;
+    max-width: 300px;
+}
+
+/* Tablet Content */
+.image-slider-section.tablet .slide-content-wrapper {
+    bottom: 18%;
+    left: 6%;
+    width: 350px;
+}
+
+.slide-title {
+    font-size: 50px;
     margin-bottom: 30px;
     text-transform: uppercase;
+    line-height: 1.1;
 }
+
+/* Mobile Title */
+.image-slider-section.mobile .slide-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Tablet Title */
+.image-slider-section.tablet .slide-title {
+    font-size: 36px;
+    margin-bottom: 25px;
+}
+
 .slide-content .meta {
     display: flex;
     justify-content: space-between;
@@ -72,38 +130,80 @@
     border-top: 1px solid rgba(255,255,255,0.3);
     border-bottom: 1px solid rgba(255,255,255,0.3);
     padding: 15px 0;
+    gap: 15px;
 }
-.slide-content .meta div {
+
+/* Mobile Meta */
+.image-slider-section.mobile .slide-content .meta {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+    padding: 12px 0;
+}
+
+.meta-item {
     margin-right: 20px;
     width: 50%;
 }
+
+/* Mobile Meta Items */
+.image-slider-section.mobile .meta-item {
+    width: 100%;
+    margin-right: 0;
+}
+
 .slide-content .meta strong {
     display: block;
     margin-bottom: 5px;
     font-size: 12px;
     opacity: 0.7;
 }
+
+/* Mobile Meta Strong */
+.image-slider-section.mobile .slide-content .meta strong {
+    font-size: 10px;
+    margin-bottom: 3px;
+}
+
 .slide-content .meta p {
     font-size: 16px;
     line-height: 1.4;
 }
 
+/* Mobile Meta Paragraph */
+.image-slider-section.mobile .slide-content .meta p {
+    font-size: 14px;
+    line-height: 1.3;
+}
 
-/* ------------------------------------------------------------------ */
-/* --- 2. Controls Container (Adjusted position) --- */
-/* ------------------------------------------------------------------ */
+/* Controls Container - Responsive */
 .controls-container {
     position: absolute;
-    bottom: 15%; /* Aligned with content wrapper */
-    right: 15%; /* Adjusted right position */
-    left: auto; 
+    bottom: 15%;
+    right: 15%;
+    left: auto;
     z-index: 10;
     display: flex;
     align-items: center;
-    flex-direction: row-reverse; 
+    flex-direction: row-reverse;
 }
 
-/* Pagination Counter Style */
+/* Mobile Controls */
+.image-slider-section.mobile .controls-container {
+    bottom: 10%;
+    right: 5%;
+    flex-direction: column-reverse;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+/* Tablet Controls */
+.image-slider-section.tablet .controls-container {
+    bottom: 12%;
+    right: 8%;
+}
+
+/* Pagination Counter */
 .pagination {
     color: #fff;
     font-size: 18px;
@@ -111,19 +211,43 @@
     display: flex;
     align-items: baseline;
     margin-right: 0;
-    margin-left: 30px; 
+    margin-left: 30px;
 }
-.pagination span:first-child {
-    font-size: 56px; 
+
+/* Mobile Pagination */
+.image-slider-section.mobile .pagination {
+    font-size: 14px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.current-index {
+    font-size: 56px;
     margin-right: 5px;
     line-height: 1;
 }
 
-/* Navigation Buttons Style (Unchanged) */
+/* Mobile Current Index */
+.image-slider-section.mobile .current-index {
+    font-size: 32px;
+}
+
+/* Tablet Current Index */
+.image-slider-section.tablet .current-index {
+    font-size: 48px;
+}
+
+/* Navigation Buttons */
 .nav-buttons {
     display: flex;
     gap: 4px;
 }
+
+/* Mobile Nav Buttons */
+.image-slider-section.mobile .nav-buttons {
+    gap: 2px;
+}
+
 .nav-button {
     background: transparent;
     border: 1px solid rgba(255,255,255,0.3);
@@ -135,13 +259,92 @@
     align-items: center;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 18px;
 }
+
+/* Mobile Nav Buttons */
+.image-slider-section.mobile .nav-button {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+}
+
 .nav-button:hover {
     background-color: rgba(255,255,255,0.1);
 }
-.nav-button:first-child { 
+
+.nav-button:first-child {
     border-right: 1px solid rgba(255,255,255,0.3);
 }
+
 .nav-button:last-child {
     border-left: none;
+}
+
+/* Touch-friendly improvements for mobile */
+@media (max-width: 768px) {
+    .nav-button {
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .slide-content-wrapper {
+        pointer-events: none;
+    }
+    
+    .slide-content-wrapper > * {
+        pointer-events: auto;
+    }
+}
+
+/* Large mobile devices */
+@media (min-width: 481px) and (max-width: 768px) {
+    .image-slider-section.mobile .slide {
+        width: 380px;
+        height: 240px;
+    }
+    
+    .image-slider-section.mobile .slide-title {
+        font-size: 28px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 380px) {
+    .image-slider-section.mobile .slide {
+        width: 440px;
+        height: 365px;
+        left: 44%;
+    }
+    
+    .image-slider-section.mobile .slide-title {
+        font-size: 22px;
+    }
+    
+    .image-slider-section.mobile .slide-content .meta p {
+        font-size: 12px;
+    }
+}
+
+/* Height adjustments for landscape mobile */
+@media (max-height: 600px) and (max-width: 768px) {
+    .image-slider-section.mobile .slide-content-wrapper {
+        bottom: 15%;
+    }
+    
+    .image-slider-section.mobile .controls-container {
+        bottom: 8%;
+    }
+    
+    .image-slider-section.mobile .slide {
+        top: 38%;
+    }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1920px) {
+    .image-slider-section .slide {
+        width: 1400px;
+        height: 520px;
+    }
 }

@@ -3,8 +3,17 @@ import { useEffect, useState } from "react";
 
 export const ScrollIndicators = ({ scrollContainerRef }) => {
   const [progresses, setProgresses] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check screen size initially and on resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const scroller = scrollContainerRef.current;
     if (!scroller) return;
 
@@ -33,8 +42,12 @@ export const ScrollIndicators = ({ scrollContainerRef }) => {
     return () => {
       scroller.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("resize", checkMobile);
     };
   }, [scrollContainerRef]);
+
+  // 🔥 Hide indicators on mobile screens
+  if (isMobile) return null;
 
   return (
     <div className="fixed left-4 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50">

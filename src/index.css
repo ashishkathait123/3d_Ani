@@ -24,7 +24,8 @@ body,
 /* Container for your app */
 .main-app-container {
   border: 2px solid white;
-  margin: 2px 2px;
+  margin: 9px 9px;
+  z-index: 1000;
 }
 
 /* Ensure sections take full viewport height */

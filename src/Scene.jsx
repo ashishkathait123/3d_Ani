@@ -13,20 +13,28 @@ export const Scene = () => {
   const planetGroupRef = useRef(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [visibleSections, setVisibleSections] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Optional: slow rotation for planet
+  // Detect screen resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Slow planet rotation
   useFrame(() => {
     if (planetGroupRef.current && planetGroupRef.current.scale.x > 0.01) {
       planetGroupRef.current.rotation.y += 0.002;
     }
   });
 
-  // Define planet positions for each section
-  const planetPositions = [
+  // Base planet positions (desktop)
+  const basePositions = [
     { x: 0, y: -1.2, z: -1, scale: 1.4 },   // 0
     { x: 0, y: 3, z: 0, scale: 1.6 },       // 1
-    { x: 0, y: 3, z: 0, scale: 1.5 },       // 2
-    { x: -5.2, y: 3.5, z: 0, scale: 2 },      // 3
+    { x: 0, y: 3.5, z: 0, scale: 1.5 },     // 2
+    { x: -5.2, y: 3.5, z: 0, scale: 2 },    // 3
     { x: -7, y: 2, z: 0, scale: 0 },        // 4 disappear
     { x: -7, y: 2, z: 0, scale: 0 },        // 5
     { x: 0, y: -1.5, z: -1, scale: 1.5 },   // 6
@@ -36,18 +44,39 @@ export const Scene = () => {
     { x: -7, y: 2, z: 0, scale: 0 },        // 10
     { x: -7, y: 2, z: 0, scale: 0 },        // 11
     { x: -7, y: 2, z: 0, scale: 0 },        // 12
-    { x: 0, y: 0, z: -1, scale: 1.5 },      // 13 HeroSection2
-    { x: 0, y: 0, z: -1, scale: 1.5 },      // 14 WelcomeSection
+     {x: -7, y: 2, z: 0, scale: 0 },     // 13 HeroSection2
+    { x: 0, y: -1, z: -1, scale: 1.8 },      // 14 WelcomeSection
   ];
 
-  // Track scroll sections and current section
+  // Responsive adjustment helper
+  const getResponsivePosition = (base) => {
+    if (isMobile) {
+      // Slightly reduce scale and bring up Y to center better on small screens
+      return {
+        x: base.x * 0.4,
+        y: base.y * 1,
+        z: base.z,
+        scale: base.scale * 1,
+      };
+    } else if (window.innerWidth <= 1024) {
+      // Tablet: moderate adjustment
+      return {
+        x: base.x * 0.8,
+        y: base.y * 0.85,
+        z: base.z,
+        scale: base.scale * 0.85,
+      };
+    }
+    return base; // Desktop
+  };
+
+  // ScrollTrigger setup
   useLayoutEffect(() => {
     const sections = document.querySelectorAll(".scroll-section");
 
-    // Dynamically determine visible sections based on data attribute
     const visible = Array.from(sections)
       .map((sec, idx) => (sec.dataset.showPlanet === "true" ? idx : null))
-      .filter(idx => idx !== null);
+      .filter((idx) => idx !== null);
     setVisibleSections(visible);
 
     sections.forEach((section, index) => {
@@ -66,14 +95,13 @@ export const Scene = () => {
     };
   }, []);
 
-  // Animate planet based on current section
+  // Animate planet with responsive values
   useEffect(() => {
     if (!planetGroupRef.current) return;
 
-    const idx = Math.min(currentSection, planetPositions.length - 1);
-    const target = planetPositions[idx];
+    const idx = Math.min(currentSection, basePositions.length - 1);
+    const target = getResponsivePosition(basePositions[idx]);
 
-    // Animate position & scale
     gsap.to(planetGroupRef.current.position, {
       x: target.x,
       y: target.y,
@@ -90,15 +118,34 @@ export const Scene = () => {
       ease: "power2.inOut",
     });
 
-    // Animate opacity based on visibility
+    // Visibility toggle
     if (visibleSections.includes(currentSection)) {
-      gsap.to(planetGroupRef.current, { opacity: 1, duration: 1, ease: "power1.out" });
+      gsap.to(planetGroupRef.current, {
+        opacity: 1,
+        duration: 1,
+        ease: "power1.out",
+      });
     } else {
-      gsap.to(planetGroupRef.current, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
+      gsap.to(planetGroupRef.current, {
+        opacity: 0,
+        duration: 0.6,
+        ease: "power1.inOut",
+      });
     }
-  }, [currentSection, visibleSections]);
+  }, [currentSection, visibleSections, isMobile]);
 
-  // Only show orbital lines in first section
+  // Adjust camera for screen size
+  useEffect(() => {
+    if (!cameraRef.current) return;
+    const camZ = isMobile ? 9 : window.innerWidth <= 1024 ? 7 : 6;
+
+    gsap.to(cameraRef.current.position, {
+      z: camZ,
+      duration: 1,
+      ease: "power2.inOut",
+    });
+  }, [isMobile]);
+
   const showOrbitLines = currentSection === 0;
 
   return (
@@ -109,7 +156,7 @@ export const Scene = () => {
         near={0.1}
         far={10000}
         makeDefault
-        position={[0, 0, 6]}
+        position={[0, 0, 6.5]}
       />
       <Environment preset="city" />
 

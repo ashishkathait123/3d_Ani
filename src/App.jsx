@@ -52,6 +52,22 @@ function App() {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [showOrbitalLines, setShowOrbitalLines] = useState(true);
   const [showFooter, setShowFooter] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  // Device detection
+  useEffect(() => {
+    const checkDevice = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsTablet(width > 768 && width <= 1024);
+    };
+
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    
+    return () => window.removeEventListener('resize', checkDevice);
+  }, []);
 
   const slides = [
     { img: "/model/gg.jpg", title: "Dream Architect", community: "Writers Guild", expansion: "Vol. 1" },
@@ -68,24 +84,26 @@ function App() {
 
     ScrollTrigger.defaults({ scroller });
 
-    // --- Page Border Animation ---
-    gsap.set(".page-border .line", { scaleX: 0, scaleY: 0, opacity: 0 });
-    gsap.set(".page-border .corner", { opacity: 0 });
+    // --- Page Border Animation (Hidden on Mobile) ---
+    if (!isMobile) {
+      gsap.set(".page-border .line", { scaleX: 0, scaleY: 0, opacity: 0 });
+      gsap.set(".page-border .corner", { opacity: 0 });
 
-    const borderTimeline = gsap.timeline({ delay: 0.5 });
-    borderTimeline
-      .to(".page-border .line.top, .page-border .line.bottom", {
-        scaleX: 1,
-        opacity: 1,
-        duration: 1.2,
-        ease: "power2.out",
-      })
-      .to(
-        ".page-border .line.left, .page-border .line.right",
-        { scaleY: 1, opacity: 1, duration: 1.2, ease: "power2.out" },
-        "<0.3"
-      )
-      .to(".page-border .corner", { opacity: 1, duration: 0.5 }, "<0.5");
+      const borderTimeline = gsap.timeline({ delay: 0.5 });
+      borderTimeline
+        .to(".page-border .line.top, .page-border .line.bottom", {
+          scaleX: 1,
+          opacity: 1,
+          duration: 1.2,
+          ease: "power2.out",
+        })
+        .to(
+          ".page-border .line.left, .page-border .line.right",
+          { scaleY: 1, opacity: 1, duration: 1.2, ease: "power2.out" },
+          "<0.3"
+        )
+        .to(".page-border .corner", { opacity: 1, duration: 0.5 }, "<0.5");
+    }
 
     // --- Background Image Transitions ---
     const sections = gsap.utils.toArray(".scroll-section");
@@ -103,20 +121,19 @@ function App() {
         imageTransitionTL.to(currentImage, { opacity: 0, duration: 0.5 }, 0);
         imageTransitionTL.to(nextImage, { opacity: 1, duration: 0.5 }, 0);
 
+        // --- SlidingTabs Visibility (show once and persist) ---
         ScrollTrigger.create({
-          trigger: section,
-          start: "bottom bottom",
-          endTrigger: sections[i + 1],
-          end: "top bottom",
-          scrub: true,
-          animation: imageTransitionTL,
+          trigger: "#sliding-tabs-section",
+          scroller,
+          start: "top center",
+          onEnter: () => setShowTabs(true),
         });
       }
     });
 
     // --- Section Entrance Animations ---
     sections.forEach((section) => {
-      const children = section.children; // animate children individually
+      const children = section.children;
       gsap.from(children, {
         scrollTrigger: {
           trigger: section,
@@ -124,11 +141,11 @@ function App() {
           start: "top 80%",
           toggleActions: "play none none none",
         },
-        y: 50,
+        y: isMobile ? 30 : 50,
         opacity: 0,
-        duration: 1,
+        duration: isMobile ? 0.8 : 1,
         ease: "power3.out",
-        stagger: 0.15,
+        stagger: isMobile ? 0.1 : 0.15,
       });
     });
 
@@ -172,10 +189,12 @@ function App() {
 
     // --- Cleanup ---
     return () => {
-      borderTimeline.kill();
+      if (!isMobile) {
+        borderTimeline.kill();
+      }
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, [loadingComplete]);
+  }, [loadingComplete, isMobile]);
 
   if (!loadingComplete) {
     return <LoaderAndIntro onAnimationComplete={() => setLoadingComplete(true)} />;
@@ -183,17 +202,19 @@ function App() {
 
   return (
     <div className="main-app-container">
-      {/* Page Borders */}
-      <div className="page-border">
-        <div className="line top" />
-        <div className="line bottom" />
-        <div className="line left" />
-        <div className="line right" />
-        <div className="corner top-left" />
-        <div className="corner top-right" />
-        <div className="corner bottom-left" />
-        <div className="corner bottom-right" />
-      </div>
+      {/* Page Borders - Hidden on Mobile */}
+      {!isMobile && (
+        <div className="page-border">
+          <div className="line top" />
+          <div className="line bottom" />
+          <div className="line left" />
+          <div className="line right" />
+          <div className="corner top-left" />
+          <div className="corner top-right" />
+          <div className="corner bottom-left" />
+          <div className="corner bottom-right" />
+        </div>
+      )}
 
       {/* Background Layers */}
       <div ref={imageOverlayRef} className="image-background-overlay">
@@ -204,7 +225,7 @@ function App() {
 
       {/* 3D Scene */}
       <div className="canvas-container">
-        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6], fov: 45 }}>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, isMobile ? 8 : 6], fov: isMobile ? 35 : 45 }}>
           <Suspense fallback={null}>
             <Scene showOrbitalLines={showOrbitalLines} scrollerRef={scrollContainerRef} />
           </Suspense>
@@ -214,63 +235,120 @@ function App() {
       <ScrollIndicators scrollContainerRef={scrollContainerRef} />
 
       {/* Scroll Content */}
-     <div
-  ref={scrollContainerRef}
-  className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory"
-  style={{ scrollSnapType: 'y mandatory' }}
->
-
+      <div
+        ref={scrollContainerRef}
+        className="main-scroll-container h-screen overflow-y-scroll snap-y snap-mandatory"
+        style={{ scrollSnapType: 'y mandatory' }}
+      >
         <NavOverlay />
 
-    <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
-  <div className="relative top-[-20%] text-center text-white max-w-4xl px-6 flex flex-col items-center justify-center gap-8">
-    <h2 className="title-text text-5xl md:text-6xl font-bold leading-tight tracking-wide">
-      Turn Ideas Into<br />Multi-Format Universes
-    </h2>
+        {/* Hero Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <div className={`relative text-center text-white px-4 flex flex-col items-center justify-center gap-4 ${isMobile ? 'top-[-10%] max-w-xs gap-4' : isTablet ? 'top-[-15%] max-w-2xl gap-6' : 'top-[-20%] max-w-4xl gap-8'}`}>
+            <h2 className={`font-bold leading-tight tracking-wide ${isMobile ? 'text-2xl' : isTablet ? 'text-4xl' : 'text-5xl md:text-6xl'}`}>
+              Turn Ideas Into<br />Multi-Format Universes
+            </h2>
 
-    <TryVedButton />
+            <TryVedButton />
 
-    {/* Arrow Down Image */}
-    <img
-      src="/model/arrow.webp" // replace with your actual path
-      alt="Scroll Down"
-      className="mt-6 w-8 h-8 animate-bounce"
-    />
-  </div>
-</section>
+            {/* Arrow Down Image */}
+            <img
+              src="/model/arrow.webp"
+              alt="Scroll Down"
+              className={`mt-4 animate-bounce ${isMobile ? 'w-6 h-6' : 'w-8 h-8'}`}
+            />
+          </div>
+        </section>
 
+        {/* CTA Section */}
         <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
           <CallToActionSection />
         </section>
 
+        {/* World's First AI Studio Section */}
         <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
-          <div className="text-center text-white max-w-3xl px-6">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              World's First AI-Native Studio with Tokenized IP
+          <div className={`text-center text-white px-4 ${isMobile ? 'max-w-xs top-32' : isTablet ? 'max-w-lg top-40' : 'max-w-3xl top-48'}`}>
+            {/* Main Title */}
+            <h2 className={`font-bold mb-4 leading-tight tracking-wide ${isMobile ? 'text-xl' : isTablet ? 'text-3xl' : 'text-4xl md:text-5xl'}`}>
+              World's First AI-Native Studio<br />
+              with Tokenized IP
             </h2>
-            <p className="text-base md:text-lg opacity-90 leading-relaxed">
-              A grand, ever-evolving world where writers, artists, AI, and fans create legendary stories together.
+            
+            {/* Paragraph Text */}
+            <p className={`opacity-90 leading-relaxed mb-8 ${isMobile ? 'text-xs px-2' : isTablet ? 'text-base px-4' : 'text-base md:text-lg px-2 md:px-6'}`}>
+              A grand, ever-evolving world where writers, artists, AI, and fans create legendary stories together. Turn your ideas into scripts, develop rich characters, and bring worlds to life.
             </p>
+            
+            {/* Bracketed Button */}
+            <a 
+              href="#explore-ips" 
+              className={`font-mono tracking-widest text-white/90 px-4 py-2 uppercase inline-flex items-center justify-center hover:text-red-500 transition-colors duration-300 ${isMobile ? 'text-xs' : 'text-sm'}`}
+            >
+              [ EXPLORE OUR IPS ] 
+              <span className="ml-2">▶</span>
+            </a>
           </div>
         </section>
 
-        <section id="sliding-tabs-section" className="scroll-section h-screen flex items-center justify-center snap-none relative">
-          {showTabs && <SlidingTabs isVisible={showTabs} />}
+        {/* Sliding Tabs Section */}
+        <section
+          id="sliding-tabs-section"
+          className="scroll-section snap-start h-screen flex items-center justify-center relative"
+        >
+          <SlidingTabs isVisible={showTabs} />
         </section>
 
+        {/* Image Slider Section */}
         <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
           <ImageSlider slides={slides} scrollerRef={scrollContainerRef} />
         </section>
 
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><AIWritingHero /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><OrbitLineReveal /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><CharacterSlider /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><Evolve /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><SlidingTabSection /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><HeroPartnerSection /></section>
-        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center"><ArchDoorwayWrapper><FeatureSlider /></ArchDoorwayWrapper></section>
-        <section className="scroll-section snap-start h-screen flex items-center justify-center" data-show-planet="true"><HeroSection2 /></section>
-        <section className="scroll-section snap-start h-screen flex items-center justify-center" data-show-planet="true"><WelcomeSection /></section>
+        {/* AI Writing Hero Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <AIWritingHero />
+        </section>
+
+        {/* Orbit Line Reveal Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <OrbitLineReveal />
+        </section>
+
+        {/* Character Slider Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <CharacterSlider />
+        </section>
+
+        {/* Evolve Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <Evolve />
+        </section>
+
+        {/* Sliding Tab Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <SlidingTabSection />
+        </section>
+
+        {/* Hero Partner Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <HeroPartnerSection />
+        </section>
+
+        {/* Feature Slider Section */}
+        <section className="scroll-section snap-start h-screen w-full flex items-center justify-center">
+          <ArchDoorwayWrapper>
+            <FeatureSlider />
+          </ArchDoorwayWrapper>
+        </section>
+
+        {/* Hero Section 2 */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center" data-show-planet="true">
+          <HeroSection2 />
+        </section>
+
+        {/* Welcome Section */}
+        <section className="scroll-section snap-start h-screen flex items-center justify-center" data-show-planet="true">
+          <WelcomeSection />
+        </section>
       </div>
 
       {showFooter && (
