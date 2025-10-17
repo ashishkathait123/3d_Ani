@@ -21,7 +21,7 @@ export const NavOverlay = () => {
     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-10">
       
       {/* Navbar Container */}
-      <nav className="absolute top-3 w-full flex justify-between items-center px-5 text-white text-lg pointer-events-auto">
+      <nav className="absolute top-2 w-full flex justify-between items-center px-2 text-white text-lg pointer-events-auto">
         
         {/* Logo Section */}
         <div className="flex items-center space-x-2">

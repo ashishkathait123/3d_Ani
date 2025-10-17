@@ -15,7 +15,9 @@ body,
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
+ overflow: hidden;
+
+ 
   font-family: 'Roboto', sans-serif; /* Use Roboto globally */
   background: #151515; /* Default dark background */
   color: white;
@@ -23,11 +25,17 @@ body,
 
 /* Container for your app */
 .main-app-container {
+  
   border: 2px solid white;
-  margin: 9px 9px;
+  margin: 9px  9px;
   z-index: 1000;
 }
 
+@media (max-width: 768px) {
+  .main-app-container {
+    border: none !important;
+  }
+}
 /* Ensure sections take full viewport height */
 .scroll-section {
   height: 100vh;
