@@ -17,7 +17,7 @@ const TryVedButton = ({ onClick }) => {
       <span className="absolute right-0 top-0 w-3 h-3 border-r border-t border-gray-400 group-hover:border-pink-500 transition-colors"></span>
       <span className="absolute right-0 bottom-0 w-3 h-3 border-r border-b border-gray-400 group-hover:border-pink-500 transition-colors"></span>
 
-      <span className="mr-2 text-xl">TRY VED</span> {/* Main Text */}
+      <span className="mr-2 text-xl">EXPLORE VED</span> {/* Main Text */}
 
       {/* Arrow Icon - Using inline SVG for simplicity. Replace with <img> if you have a file. */}
       <svg

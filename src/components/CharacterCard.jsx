@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Custom CSS for brackets, hover glow, and highlighted state
 const BracketButtonStyles = () => (
   <style>{`
     .bracket-button-wrapper {
@@ -93,16 +92,16 @@ const CharacterCard = ({ character, isHighlighted }) => {
       className={`character-card bg-black p-4 relative transition-all duration-300 flex flex-col text-white text-left
         ${isHighlighted ? 'border-pink-600 border' : 'border-gray-800 border'}`}
       style={{
-        width: 'min(90vw, 280px)',   // responsive width
-        height: 'auto',
-        aspectRatio: '280 / 440',    // keeps original aspect ratio
+        width: '100%',
+        maxWidth: '280px',
+        aspectRatio: '280 / 440',
         ...highlightStyle
       }}
     >
       <BracketButtonStyles />
       
       {/* Character Image */}
-      <div className="w-full flex justify-center items-start relative mb-4 h-2/5">
+      <div className="w-full flex justify-center items-start relative mb-4 h-[40%] sm:h-[45%] md:h-[50%]">
         <div className="w-full h-full overflow-hidden rounded-md">
           <img src={displayCharacter.image} alt={displayCharacter.name} className="w-full h-full object-cover" />
         </div>
@@ -110,17 +109,17 @@ const CharacterCard = ({ character, isHighlighted }) => {
       </div>
 
       {/* Text */}
-      <div className="flex flex-col flex-grow mt-6">
-        <h3 className="text-white text-2xl font-semibold mb-2">{displayCharacter.name}</h3>
-        <p className="text-gray-400 text-sm line-clamp-3 mb-2">{displayCharacter.description}</p>
-        <div className="text-gray-400 text-sm mt-auto mb-4 font-normal">{displayCharacter.chats} CHATS</div>
+      <div className="flex flex-col flex-grow mt-4 sm:mt-6">
+        <h3 className="text-white text-xl sm:text-2xl font-semibold mb-2">{displayCharacter.name}</h3>
+        <p className="text-gray-400 text-xs sm:text-sm line-clamp-3 mb-2">{displayCharacter.description}</p>
+        <div className="text-gray-400 text-xs sm:text-sm mt-auto mb-4 font-normal">{displayCharacter.chats}</div>
       </div>
 
       {/* CHAT NOW Button */}
       <div className="mt-auto relative w-full">
         <div className={`bracket-button-wrapper ${isHighlighted ? 'is-highlighted' : ''}`}>
           <button
-            className={`bracket-button-text-container w-full py-3 font-bold tracking-widest transition-all duration-300
+            className={`bracket-button-text-container w-full py-2 sm:py-3 font-bold tracking-widest transition-all duration-300
               ${isHighlighted ? 'bg-pink-600 text-white hover:bg-pink-700' : 'bg-black hover:text-pink-600'}`}
           >
             CHAT NOW

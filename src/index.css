@@ -1,5 +1,9 @@
-/* 1️⃣ Import Google Fonts — must be at the very top */
+/* 1️⃣ Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Slussen:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Slussen+Extended:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
 
 /* 2️⃣ Tailwind directives */
 @tailwind base;
@@ -7,68 +11,253 @@
 @tailwind utilities;
 
 /* 3️⃣ Global styles */
-html,
-body,
-#root {
-  overflow: hidden;
+html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
- overflow: hidden;
-
- 
-  font-family: 'Roboto', sans-serif; /* Use Roboto globally */
-  background: #151515; /* Default dark background */
-  color: white;
+  overflow-x: hidden;   /* ✅ Allow vertical scroll but prevent horizontal overflow */
+  overflow-y: auto;     /* ✅ So scrolling sections work */
+  font-family: 'Roboto', sans-serif;
+  background-color: #151515;
+  color: #F2F2F2;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  user-select: none;
 }
 
-/* Container for your app */
+
+/* 4️⃣ Main App Container */
 .main-app-container {
-  
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  margin: 9px;
+  padding: 0;
+  overflow: hidden;
+  z-index: 10;
   border: 2px solid white;
-  margin: 9px  9px;
-  z-index: 1000;
+  border-radius: 8px;
 }
 
 @media (max-width: 768px) {
   .main-app-container {
     border: none !important;
+    margin: 0;
   }
 }
-/* Ensure sections take full viewport height */
-.scroll-section {
-  height: 100vh;
+
+/* 5️⃣ Scrollable content */
+.main-scroll-container {
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  z-index: 100;
+}
+
+/* 6️⃣ Scroll Sections */
+.scroll-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: white;
   text-align: center;
+  scroll-snap-align: start;
+  padding: 0;
+  margin: 0;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* Fixed canvas container */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 7️⃣ Canvas container (3D Planet Scene) */
+/* ✅ Canvas stays inside bordered container */
 .canvas-container {
+  position: absolute; /* changed from fixed */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1 !important; /* behind everything */
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit; /* follows container curve */
+}
+
+
+/* 8️⃣ Background Images */
+.image-background-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   z-index: 0;
-}
-
-/* Overlay content */
-.overlay-content {
-  position: relative;
-  z-index: 1;
   pointer-events: none;
 }
 
-.overlay-content > * {
-  pointer-events: auto;
+.background-image-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
+/* 9️⃣ Page Borders */
+@media (min-width: 769px) {
+  .page-border {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999 !important; /* ✅ Always above everything */
+  }
+
+  .page-border .line {
+    position: absolute;
+    background-color: rgb(117, 111, 111);
+    transform-origin: center;
+  }
+
+  .page-border .line.top,
+  .page-border .line.bottom {
+    width: 100%;
+    height: 2px;
+  }
+
+  .page-border .line.left,
+  .page-border .line.right {
+    width: 2px;
+    height: 100%;
+  }
+
+  .page-border .corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-border {
+    display: none !important;
+  }
+}
+
+/* 🔟 Scroll Indicators */
+.scroll-indicators {
+  position: fixed;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 50;
+}
+
+.scroll-indicators div {
+  width: 2px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.3s ease;
+}
+
+.scroll-indicators div.active {
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .scroll-indicators {
+    display: none !important;
+  }
+  .scroll-indicators div {
+    width: 1.5px;
+    height: 30px;
+  }
+}
+
+/* 11️⃣ Footer */
+.footer-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  z-index: 200;
+  transition: opacity 0.3s ease-out;
+  animation: fadeInFooter 0.8s ease forwards;
+  font-family: 'Azeret Mono', monospace;
+}
+
+@keyframes fadeInFooter {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+footer {
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+  padding: 1rem 0;
+  text-align: center;
+}
+
+footer a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #cc0033;
+}
+
+/* 12️⃣ Typography & Buttons */
+.title-text {
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+  font-weight: 600;
+  font-family: 'Slussen Extended', sans-serif;
+}
+.subtitle-text {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  opacity: 0.8;
+  font-family: 'Slussen', sans-serif;
+}
+.body-text {
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  font-family: 'Ubuntu', sans-serif;
+}
+.button-style {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  color: black;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+.button-style:hover {
+  background-color: red;
+  color: white;
+}
+
+/* 13️⃣ Overlay & Text */
 .text-content-wrapper {
   position: absolute;
   top: 50%;
@@ -76,81 +265,57 @@ body,
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 800px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
 }
 
-.title-text {
-  font-size: 5rem;
-  font-weight: bold;
-  line-height: 1.1;
-  margin-bottom: 20px;
+.overlay-content {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
 }
-
-.subtitle-text {
-  font-size: 1.2rem;
-  opacity: 0.8;
-}
-
-.button-style {
-  display: inline-block;
-  padding: 10px 20px;
-  border: 1px solid white;
-  color: white;
-  text-decoration: none;
-  margin: 10px;
+.overlay-content > * {
   pointer-events: auto;
 }
 
-/* 3D format items */
+/* 14️⃣ Animations */
+.arrDown {
+  animation: bounceAnim 1.5s infinite linear;
+}
+@keyframes bounceAnim {
+  0% { transform: translateY(-10px); }
+  50% { transform: translateY(5px); }
+  100% { transform: translateY(-10px); }
+}
+
+/* 15️⃣ 3D & Format Item Animations */
 .format-item {
   transform-style: preserve-3d;
   perspective: 1000px;
 }
-
 .format-item::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top:0; left:0; right:0; bottom:0;
   border-radius: inherit;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+.format-item:hover::before { opacity: 1; }
 
-.format-item:hover::before {
-  opacity: 1;
-}
-
-/* Animation */
 @keyframes slideInFromRight {
-  0% {
-    transform: translateX(300px) translateY(-100px) rotate(10deg);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0) translateY(0) rotate(0deg);
-    opacity: 1;
-  }
+  0% { transform: translateX(300px) translateY(-100px) rotate(10deg); opacity:0; }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); opacity:1; }
 }
+.format-item-animate { animation: slideInFromRight 0.8s ease-out forwards; }
 
-.format-item-animate {
-  animation: slideInFromRight 0.8s ease-out forwards;
-}
-
-/* Responsive design */
+/* 16️⃣ Responsive Adjustments */
 @media (max-width: 768px) {
-  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .scroll-section {
+    padding: 0.5rem;
   }
-  
-  .format-item {
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .scroll-section {
     padding: 1.5rem;
   }
-} 
-
-.footer-wrapper {
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
 }

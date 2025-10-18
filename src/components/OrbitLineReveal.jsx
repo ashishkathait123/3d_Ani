@@ -9,7 +9,7 @@ const features = [
     title: "Smart Research",
     description:
       "Access on-the-fly research and avoid deep dives. Ved brings you credible, on-demand insights into history, culture, characters, and immersive worlds.",
-    position: { x: "18%", y: "60%" },
+    position: { x: "18%", y: "50%" },
     icon: "/icons/folder-search.svg",
   },
   {
@@ -18,7 +18,7 @@ const features = [
     title: "Powered by Brainstorming",
     description:
       "Sharpen your ideas and leave writer’s block behind. Share a character, a what if, or even just a feeling and watch it grow into your next great story.",
-    position: { x: "50%", y: "79%" },
+    position: { x: "50%", y: "76%" },
     icon: "/icons/artificial-intelligence-03.svg",
   },
   {
@@ -27,7 +27,7 @@ const features = [
     title: "Story Formatting",
     description:
       "Create rich, multi-dimensional characters and immersive worlds while instantly formatting your screenplay or comic script to industry-ready standards with AI guidance.",
-    position: { x: "82%", y: "61%" },
+    position: { x: "82%", y: "53%" },
     icon: "/icons/ai-content-generator-01.svg",
   },
 ];
@@ -40,14 +40,14 @@ const OrbitLineReveal = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const containerRef = useRef(null);
 
-  // Handle resize responsiveness
+  // --- Handle resize responsiveness ---
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Intersection observer for visibility
+  // --- Intersection observer for visibility ---
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
@@ -57,7 +57,7 @@ const OrbitLineReveal = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Swipe gestures (mobile only)
+  // --- Swipe gestures (mobile only) ---
   const touchStartX = useRef(null);
   const handleTouchStart = (e) => (touchStartX.current = e.touches[0].clientX);
   const handleTouchMove = (e) => {
@@ -74,8 +74,19 @@ const OrbitLineReveal = () => {
     }
   };
 
-  const orbitPathD = "M 100 20 C 70 80, 30 80, 0 20";
+  // --- Orbit line path ---
+  const orbitPath = isMobile
+    ? "M -12 28 C 10 50, 66 60, 100 35" // flatter arch for mobile
+    : "M 0 2 C 40 114, 85 54, 100 2"; // desktop arch
+
   const lineAnimationDuration = 1.4;
+
+  // --- Mobile feature positions along the flatter path ---
+  const mobileFeaturePositions = [
+    { x: "48%", y: "67%" },
+     { x: "48%", y: "67%" },
+    { x: "48%", y: "67%" },
+  ];
 
   return (
     <div
@@ -93,29 +104,6 @@ const OrbitLineReveal = () => {
         <div className="w-full aspect-square rounded-full bg-pink-700/50 blur-3xl"></div>
       </motion.div>
 
-      {/* --- “VED AI – Features” Label --- */}
-      {/* <AnimatePresence>
-        {visible && (
-          <motion.div
-            key="ved-ai"
-            className="absolute z-10"
-            style={{
-              top: "48%",
-              left: "45%",
-              transform: "translate(-50%, -50%)",
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
-          >
-            <span className="text-white text-base font-semibold px-5 py-2 bg-pink-600/90 rounded-full shadow-lg shadow-pink-500/40 backdrop-blur-sm">
-              VED AI – Features
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
-
       {/* --- Orbit Line --- */}
       <motion.svg
         className="absolute inset-0 w-full h-full z-[5]"
@@ -123,7 +111,7 @@ const OrbitLineReveal = () => {
         preserveAspectRatio="none"
       >
         <motion.path
-          d={orbitPathD}
+          d={orbitPath}
           fill="none"
           stroke="#ff0066"
           strokeWidth="0.6"
@@ -188,9 +176,15 @@ const OrbitLineReveal = () => {
           <motion.div
             key={features[currentIndex].id}
             className="absolute z-20 flex flex-col items-center text-center px-6"
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 175 }}
-            exit={{ opacity: 0, scale: 0.9, y: -30 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              left: mobileFeaturePositions[currentIndex].x,
+              top: mobileFeaturePositions[currentIndex].y,
+              transform: "translate(-50%, -50%)",
+            }}
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg shadow-pink-500/50 mb-4">
@@ -203,7 +197,7 @@ const OrbitLineReveal = () => {
             <h3 className="text-white text-lg font-semibold mb-2">
               {features[currentIndex].title}
             </h3>
-            <p className="text-gray-400 text-sm max-w-[280px]">
+            <p className="text-gray-400 text-sm max-w-[280px] text-center">
               {features[currentIndex].description}
             </p>
 

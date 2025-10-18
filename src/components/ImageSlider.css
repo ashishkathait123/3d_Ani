@@ -54,13 +54,14 @@
     width: 650px;
     height: 300px;
     left: -2%;
-    top: 42%;
+    top: 48%;
 }
 
 /* Desktop Slide Sizes */
 .image-slider-section:not(.mobile):not(.tablet) .slide {
-    width: 1150px;
-    height: 440px;
+    top: 58%;
+    width: 1470px;
+    height: 540px;
 }
 
 .slide img {

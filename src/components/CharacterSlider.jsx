@@ -4,16 +4,17 @@ import { characters } from '../assets/data';
 
 const CharacterSlider = () => {
   const sliderRef = useRef(null);
-  const [selectedCardId, setSelectedCardId] = useState(null); // ❌ no card selected initially
+  const [selectedCardId, setSelectedCardId] = useState(null);
   const [cardWidth, setCardWidth] = useState(280);
-  const gap = 32;
+  const gap = 16; // smaller gap on mobile
 
-  // Update card width responsively
+  // Responsive card width
   useEffect(() => {
     const updateWidth = () => {
       if (!sliderRef.current) return;
       const containerWidth = sliderRef.current.offsetWidth;
-      const responsiveWidth = Math.min(280, containerWidth * 0.6);
+      let responsiveWidth = containerWidth * 0.8;
+      if (containerWidth > 640) responsiveWidth = Math.min(280, containerWidth * 0.6);
       setCardWidth(responsiveWidth);
     };
     updateWidth();
@@ -37,7 +38,7 @@ const CharacterSlider = () => {
   };
 
   const handleCardClick = (id) => {
-    setSelectedCardId(id); // 🔥 highlight only when clicked
+    setSelectedCardId(id);
     const cardIndex = characters.findIndex((c) => c.id === id);
     if (sliderRef.current && cardIndex !== -1) {
       sliderRef.current.scrollTo({
@@ -48,18 +49,42 @@ const CharacterSlider = () => {
   };
 
   return (
-    <div className="py-16 px-4 sm:px-8 lg:px-16 w-full mb-32 mt-32">
-      {/* Header + Controls */}
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 gap-8">
-        {/* <div className="text-left max-w-2xl">
-          <h2 className="text-4xl sm:text-5xl font-light text-white leading-snug">
-            Over <span className="font-semibold text-pink-500">3000 people</span> have brought their<br />
-            vision to life using Mugafi Ved and built<br />
-            <span className="font-semibold text-pink-500">100+ characters</span>.
-          </h2>
-        </div> */}
+    <div className="py-12 px-4 sm:px-8 lg:px-16 w-full mb-32 mt-56">
+      {/* Heading */}
+      <h1 className="text-2xl sm:text-3xl md:text-4xl text-white font-extrabold mb-8 md:mb-12 max-w-4xl mx-auto md:mx-0">
+        Over 3000 people have brought their vision to life using Mugafi Ved and built{' '}
+        <span className="">100+ characters</span>.
+      </h1>
 
-        <div className="flex space-x-4 mt-4 lg:mt-0">
+      {/* Wrapper for slider + controls */}
+      <div className="flex flex-col md:flex-col-reverse lg:flex-row lg:items-center lg:justify-between gap-6">
+        {/* ✅ Slider */}
+        <div
+          ref={sliderRef}
+          className="flex overflow-x-auto snap-x snap-mandatory space-x-4 sm:space-x-6 md:space-x-8 pb-4 scrollbar-none flex-1"
+        >
+          <style>{`
+            .overflow-x-auto::-webkit-scrollbar { display: none; }
+            .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
+          `}</style>
+
+          {characters.map((character) => (
+            <div
+              key={character.id}
+              className="snap-start cursor-pointer flex-shrink-0"
+              style={{ width: cardWidth }}
+              onClick={() => handleCardClick(character.id)}
+            >
+              <CharacterCard
+                character={character}
+                isHighlighted={character.id === selectedCardId}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* ✅ Arrows */}
+        <div className="flex justify-center lg:justify-end gap-3 sm:gap-4 mt-6 lg:mt-0">
           <button
             onClick={() => scroll('prev')}
             className="w-10 h-10 border border-gray-700 text-white text-lg hover:border-pink-600 transition-colors rounded"
@@ -73,31 +98,6 @@ const CharacterSlider = () => {
             &gt;
           </button>
         </div>
-      </div>
-
-      {/* Slider */}
-      <div
-        ref={sliderRef}
-        className="flex overflow-x-auto snap-x snap-mandatory space-x-4 sm:space-x-6 md:space-x-8 pb-4 scrollbar-none"
-      >
-        <style>{`
-          .overflow-x-auto::-webkit-scrollbar { display: none; }
-          .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
-        `}</style>
-
-        {characters.map((character) => (
-          <div
-            key={character.id}
-            className="snap-start cursor-pointer flex-shrink-0"
-            style={{ width: cardWidth }}
-            onClick={() => handleCardClick(character.id)}
-          >
-            <CharacterCard
-              character={character}
-              isHighlighted={character.id === selectedCardId}
-            />
-          </div>
-        ))}
       </div>
     </div>
   );
